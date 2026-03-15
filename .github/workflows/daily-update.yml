@@ -1,0 +1,43 @@
+name: "台股資料每日更新"
+
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"
+    - cron: "30 0 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install
+        run: cd backend && npm install
+
+      - name: Fetch data
+        run: cd backend && node run-update.js
+        env:
+          TZ: "Asia/Taipei"
+
+      - name: Copy to frontend
+        run: |
+          mkdir -p frontend/data
+          cp backend/output/*.json frontend/data/ 2>/dev/null || true
+
+      - name: Commit and Push
+        run: |
+          git config user.name "TWStock Bot"
+          git config user.email "bot@twstock-agent.dev"
+          git add -A
+          git diff --staged --quiet || git commit -m "update data"
+          git push
