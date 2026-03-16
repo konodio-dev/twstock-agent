@@ -1,9 +1,11 @@
 {
   "name": "twstock-agent-backend",
-  "version": "2.0.0",
-  "description": "台股日監測 Agent 後端",
+  "version": "3.1.0",
+  "description": "台美股日監測 Agent 後端",
   "scripts": {
     "update": "node run-update.js"
   },
-  "dependencies": {}
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
 }
