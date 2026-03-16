@@ -1,6 +1,8 @@
 // ═══════════════════════════════════════════════════════════════════
-// 台股 + 美股 日監測 Agent Pro — 後端資料擷取引擎 v3.0
+// 台股 + 美股 日監測 Agent Pro — 後端資料擷取引擎 v3.1
 // ═══════════════════════════════════════════════════════════════════
+
+var ipoScraper = require("./ipo-scraper");
 
 const DATA_SOURCES = {
   // 台股
@@ -398,22 +400,27 @@ async function runFullUpdate() {
   var usStocks = await fetchUSStockPrices();
   var usIndices = await fetchUSIndices();
 
+  // IPO 公開申購
+  var ipoData = await ipoScraper.fetchIPO();
+
   // 台美連動分析
   var correlation = buildCorrelationMap(usStocks, twStocks);
 
   console.log("══════════════════════════════════════");
   console.log("  TW: " + Object.keys(twStocks).length + " stocks");
   console.log("  US: " + Object.keys(usStocks).length + " stocks");
+  console.log("  IPO: " + ipoData.length + " records");
   console.log("  Alerts: " + correlation.length);
   console.log("══════════════════════════════════════");
 
   return {
-    version: "3.0",
+    version: "3.1",
     generated: new Date().toISOString(),
     date: getDateStr(),
     tw_stocks: twStocks,
     us_stocks: usStocks,
     us_indices: usIndices,
+    ipo: ipoData,
     correlation_alerts: correlation,
   };
 }
