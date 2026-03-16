@@ -15,6 +15,8 @@ body{background:#060b14;overflow-x:hidden}
 ::selection{background:rgba(0,229,176,0.3);color:#fff}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .loading-dot{animation:pulse 1.5s infinite}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.3s ease}
 </style>
 </head>
 <body>
@@ -22,27 +24,54 @@ body{background:#060b14;overflow-x:hidden}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script>
-var e=React.createElement,useState=React.useState,useEffect=React.useEffect,useRef=React.useRef,useMemo=React.useMemo;
+var e=React.createElement,useState=React.useState,useEffect=React.useEffect,useMemo=React.useMemo;
 var C={bg:"#060b14",surface:"#0d1420",card:"#131c2e",cardHover:"#182438",border:"#1e2d45",accent:"#00e5b0",accentDim:"rgba(0,229,176,0.12)",warn:"#fbbf24",warnDim:"rgba(251,191,36,0.12)",danger:"#f43f5e",dangerDim:"rgba(244,63,94,0.12)",up:"#00e5b0",down:"#f43f5e",flat:"#64748b",text:"#e8edf5",textDim:"#8b9ab8",textMuted:"#4a5a78",gold:"#fbbf24",purple:"#a78bfa",blue:"#38bdf8",orange:"#fb923c"};
 var F="'Noto Sans TC',system-ui,sans-serif",M="'JetBrains Mono',monospace";
 var cS={background:C.card,borderRadius:14,border:"1px solid "+C.border,overflow:"hidden"};
-
-// ══════════════════════════════════════
-// DATA URL — 你的 GitHub Pages JSON
-// ══════════════════════════════════════
 var DATA_URL="https://konodio-dev.github.io/twstock-agent/frontend/data/latest.json";
 
-// ── Helpers ──
 function Pill(p){return e("span",{style:{fontSize:10,padding:"2px 7px",borderRadius:4,background:(p.color||C.blue)+"18",color:p.color||C.blue,fontWeight:600,whiteSpace:"nowrap"}},p.children)}
 function fmtVol(v){if(!v)return"-";if(v>=1e8)return(v/1e8).toFixed(1)+"億";if(v>=1e4)return(v/1e4).toFixed(0)+"萬";return v+""}
-function fmtP(v){var n=parseFloat(v);return(n>=0?"+":"")+n+"%"}
+function fmtP(v){var n=parseFloat(v);return isNaN(n)?"-":(n>=0?"+":"")+n.toFixed(2)+"%"}
 function pColor(v){var n=parseFloat(v);return n>0?C.up:n<0?C.down:C.flat}
+function StatBox(p){return e("div",{style:{background:p.bg||C.surface,borderRadius:10,padding:"10px 12px",minWidth:0}},e("div",{style:{fontSize:9,color:C.textMuted,marginBottom:2}},p.label),e("div",{style:{fontSize:p.big?22:16,fontWeight:800,color:p.color||C.text,fontFamily:M}},p.value),p.sub&&e("div",{style:{fontSize:10,color:p.subColor||C.textDim,fontFamily:M}},p.sub))}
+function SectionCard(p){return e("div",{style:Object.assign({},cS,{padding:16,background:p.gradient||C.card,border:"1px solid "+(p.borderColor||C.border)})},p.icon&&e("h3",{style:{margin:"0 0 6px",fontSize:15,fontWeight:700}},p.icon+" "+p.title),p.desc&&e("p",{style:{margin:0,fontSize:12,color:C.textDim}},p.desc),p.children)}
 
-// ══════════════════════════════════════
-// MAIN APP
-// ══════════════════════════════════════
+function TIBadge(p){
+  var ti=p.ti;if(!ti||!ti.rsi)return null;
+  var sig=ti.signal||"neutral";
+  var colors={overbought:{bg:C.dangerDim,c:C.danger,t:"超買"},oversold:{bg:C.accentDim,c:C.accent,t:"超賣"},bullish:{bg:C.accentDim,c:C.accent,t:"偏多"},bearish:{bg:C.dangerDim,c:C.danger,t:"偏空"},neutral:{bg:C.border+"44",c:C.textDim,t:"中性"}};
+  var s=colors[sig]||colors.neutral;
+  return e("span",{style:{fontSize:9,padding:"2px 6px",borderRadius:4,background:s.bg,color:s.c,fontWeight:700}},s.t)
+}
+
+function TIPanel(p){
+  var ti=p.ti;if(!ti||!ti.rsi)return e("div",{style:{fontSize:11,color:C.textMuted,padding:8}},"技術指標需等 Actions 更新後計算");
+  function gauge(label,val,lo,hi){
+    var pct=Math.max(0,Math.min(100,((val-lo)/(hi-lo))*100));
+    var col=val>70?C.danger:val<30?C.accent:C.warn;
+    return e("div",{style:{marginBottom:8}},
+      e("div",{style:{display:"flex",justifyContent:"space-between",fontSize:10,marginBottom:3}},e("span",{style:{color:C.textMuted}},label),e("span",{style:{color:col,fontFamily:M,fontWeight:700}},val)),
+      e("div",{style:{height:5,background:C.border,borderRadius:3,overflow:"hidden"}},e("div",{style:{width:pct+"%",height:"100%",background:col,borderRadius:3}})))
+  }
+  return e("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}},
+    e("div",null,gauge("RSI(14)",ti.rsi,0,100),gauge("K 值",ti.k,0,100),gauge("D 值",ti.d,0,100)),
+    e("div",null,
+      e("div",{style:{fontSize:10,color:C.textMuted,marginBottom:4}},"MACD"),
+      e("div",{style:{display:"flex",gap:12,marginBottom:8}},
+        e("div",null,e("div",{style:{fontSize:9,color:C.textMuted}},"DIF"),e("div",{style:{fontSize:13,fontFamily:M,fontWeight:700,color:ti.macd>=0?C.up:C.down}},ti.macd)),
+        e("div",null,e("div",{style:{fontSize:9,color:C.textMuted}},"MACD"),e("div",{style:{fontSize:13,fontFamily:M,fontWeight:700,color:ti.macd_signal>=0?C.up:C.down}},ti.macd_signal)),
+        e("div",null,e("div",{style:{fontSize:9,color:C.textMuted}},"柱狀"),e("div",{style:{fontSize:13,fontFamily:M,fontWeight:700,color:ti.macd_hist>=0?C.up:C.down}},ti.macd_hist))
+      ),
+      e("div",{style:{fontSize:10,color:C.textMuted,marginBottom:4}},"綜合訊號"),
+      e(TIBadge,{ti:ti}),
+      e("span",{style:{fontSize:10,color:C.textDim,marginLeft:6}},ti.data_points+"日資料")
+    )
+  )
+}
+
 function App(){
-var _t=useState("tw"),tab=_t[0],setTab=_t[1];
+var _t=useState("overview"),tab=_t[0],setTab=_t[1];
 var _d=useState(null),data=_d[0],setData=_d[1];
 var _err=useState(null),err=_err[0],setErr=_err[1];
 var _loading=useState(true),loading=_loading[0],setLoading=_loading[1];
@@ -51,58 +80,46 @@ var _usel=useState(null),usel=_usel[0],setUsel=_usel[1];
 var _search=useState(""),search=_search[0],setSearch=_search[1];
 var _usearch=useState(""),usearch=_usearch[0],setUsearch=_usearch[1];
 
-// ── Fetch real data on load ──
 useEffect(function(){
-  setLoading(true);
-  fetch(DATA_URL).then(function(r){
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    return r.json();
-  }).then(function(json){
-    setData(json);
-    setLoading(false);
-  }).catch(function(e){
-    console.error("Fetch error:",e);
-    setErr("尚未產生資料，請先到 GitHub Actions 手動執行一次更新");
-    setLoading(false);
-  });
+  fetch(DATA_URL).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(json){setData(json);setLoading(false)}).catch(function(e){setErr("資料載入失敗");setLoading(false)});
 },[]);
 
-var tabs=[{k:"tw",l:"🇹🇼 台股監測"},{k:"ipo",l:"🎫 IPO抽籤"},{k:"us",l:"🇺🇸 美股監測"},{k:"link",l:"🔗 台美連動"}];
+var tabs=[
+  {k:"overview",l:"📊 市場總覽"},
+  {k:"news",l:"⚡ 即時快訊"},
+  {k:"ai",l:"🤖 AI策略"},
+  {k:"tw",l:"🇹🇼 台股監測"},
+  {k:"ipo",l:"🎫 IPO抽籤"},
+  {k:"us",l:"🇺🇸 美股監測"},
+  {k:"link",l:"🔗 台美連動"},
+];
 
-// ── Parse data ──
-var twList=[],usList=[],ipoList=[],alerts=[],usIdx=[],genTime="";
+// Parse data
+var twList=[],usList=[],ipoList=[],alerts=[],usIdx=[],genTime="",twIdx=null,mStats=null,aiSigs=[],newsAlerts=[];
 if(data){
   genTime=data.generated||"";
-  // TW stocks - support both v2 "stocks" and v3 "tw_stocks"
+  twIdx=data.tw_index||null;
+  mStats=data.market_stats||null;
+  aiSigs=data.ai_signals||[];
+  newsAlerts=data.news_alerts||[];
+
   var rawTW=data.tw_stocks||data.stocks||{};
-  if(rawTW){
-    twList=Object.values(rawTW).filter(function(s){return s.name&&s.price>0});
-    twList.forEach(function(s){
-      s.changeP=s.changeP||"0.00";
-      s.vol_str=fmtVol(s.volume);
-      var net=(s.foreign_buy||0)+(s.trust_buy||0)+(s.dealer_buy||0);
-      s.net_inst=net;
-    });
-    twList.sort(function(a,b){return(b.volume||0)-(a.volume||0)});
-  }
-  // US stocks
-  if(data.us_stocks){
-    usList=Object.values(data.us_stocks);
-    usList.forEach(function(s){s.changeP=s.changeP||"0.00"});
-    usList.sort(function(a,b){return Math.abs(parseFloat(b.changeP))-Math.abs(parseFloat(a.changeP))});
-  }
-  // US indices
+  twList=Object.values(rawTW).filter(function(s){return s.name&&s.price>0});
+  twList.forEach(function(s){
+    s.changeP=s.changeP||"0.00";s.vol_str=fmtVol(s.volume);
+    s.net_inst=(s.foreign_buy||0)+(s.trust_buy||0)+(s.dealer_buy||0);
+  });
+  twList.sort(function(a,b){return(b.volume||0)-(a.volume||0)});
+
+  if(data.us_stocks){usList=Object.values(data.us_stocks);usList.forEach(function(s){s.changeP=s.changeP||"0.00"});usList.sort(function(a,b){return Math.abs(parseFloat(b.changeP))-Math.abs(parseFloat(a.changeP))})}
   if(data.us_indices){usIdx=Object.values(data.us_indices)}
-  // IPO
   if(data.ipo){ipoList=data.ipo}
-  // Correlation
   if(data.correlation_alerts){alerts=data.correlation_alerts}
 }
 
 var filteredTW=twList.filter(function(s){return!search||s.name.indexOf(search)>=0||s.id.indexOf(search)>=0});
-var filteredUS=usList.filter(function(s){return!usearch||s.name.indexOf(usearch)>=0||s.id.toUpperCase().indexOf(usearch.toUpperCase())>=0});
+var filteredUS=usList.filter(function(s){return!usearch||s.name.indexOf(usearch)>=0||s.id.toUpperCase().indexOf(usearch.toUpperCase())>=0||(s.name_en||"").toUpperCase().indexOf(usearch.toUpperCase())>=0});
 
-// ══ RENDER ══
 return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:F}},
 
   // HEADER
@@ -114,39 +131,150 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
         e("p",{style:{margin:0,fontSize:10,color:C.textMuted}},"TWSE · TPEx · NYSE · NASDAQ · 100% 真實數據"))
     ),
     e("div",{style:{display:"flex",alignItems:"center",gap:8}},
-      genTime&&e("span",{style:{fontSize:10,color:C.textMuted,fontFamily:M}},"資料更新："+new Date(genTime).toLocaleString("zh-TW")),
+      genTime&&e("span",{style:{fontSize:10,color:C.textMuted,fontFamily:M}},"更新："+new Date(genTime).toLocaleString("zh-TW")),
       e("div",{style:{display:"flex",alignItems:"center",gap:4,padding:"5px 10px",background:C.surface,borderRadius:6,border:"1px solid "+C.border}},
         e("div",{style:{width:7,height:7,borderRadius:"50%",background:data?C.accent:C.warn,boxShadow:"0 0 6px "+(data?C.accent:C.warn)}}),
-        e("span",{style:{fontSize:10,color:C.textDim}},data?"LIVE":"LOADING")
-      )
+        e("span",{style:{fontSize:10,color:C.textDim}},data?"LIVE":"LOADING"))
     )
   ),
 
   // NAV
   e("nav",{style:{display:"flex",padding:"0 20px",background:C.surface,borderBottom:"1px solid "+C.border,overflowX:"auto"}},
-    tabs.map(function(t){return e("button",{key:t.k,onClick:function(){setTab(t.k)},style:{padding:"11px 16px",border:"none",cursor:"pointer",background:"transparent",color:tab===t.k?C.accent:C.textMuted,borderBottom:tab===t.k?"2px solid "+C.accent:"2px solid transparent",fontSize:12,fontWeight:600,whiteSpace:"nowrap"}},t.l)})
+    tabs.map(function(t){return e("button",{key:t.k,onClick:function(){setTab(t.k)},style:{padding:"11px 14px",border:"none",cursor:"pointer",background:"transparent",color:tab===t.k?C.accent:C.textMuted,borderBottom:tab===t.k?"2px solid "+C.accent:"2px solid transparent",fontSize:12,fontWeight:600,whiteSpace:"nowrap",transition:"color 0.2s"}},t.l)})
   ),
 
   // MAIN
   e("main",{style:{padding:"16px 20px",maxWidth:1440,margin:"0 auto"}},
 
-    // Loading state
     loading&&e("div",{style:{textAlign:"center",padding:"80px 20px"}},
       e("div",{className:"loading-dot",style:{fontSize:48,marginBottom:16}},"📊"),
-      e("div",{style:{fontSize:16,fontWeight:700,color:C.accent}},"正在載入即時資料..."),
-      e("div",{style:{fontSize:12,color:C.textMuted,marginTop:8}},"從 TWSE / TPEx / Yahoo Finance 抓取中")
-    ),
+      e("div",{style:{fontSize:16,fontWeight:700,color:C.accent}},"正在載入即時資料...")),
 
-    // Error state
     !loading&&err&&e("div",{style:{textAlign:"center",padding:"80px 20px"}},
       e("div",{style:{fontSize:48,marginBottom:16}},"⏳"),
-      e("div",{style:{fontSize:16,fontWeight:700,color:C.warn}},err),
-      e("div",{style:{fontSize:12,color:C.textDim,marginTop:8,lineHeight:1.8}},"請到 GitHub repo → Actions → 台股美股資料每日更新 → Run workflow",e("br",null),"執行一次後，資料就會自動產生並顯示在這裡")
+      e("div",{style:{fontSize:16,fontWeight:700,color:C.warn}},err)),
+
+    // ═══════════════════════════════════
+    // TAB: 市場總覽
+    // ═══════════════════════════════════
+    !loading&&data&&tab==="overview"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:14}},
+
+      // 大盤指數
+      e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:8}},
+        twIdx&&e(StatBox,{label:"🇹🇼 加權指數",value:twIdx.price?twIdx.price.toLocaleString():"-",sub:twIdx.changeP?fmtP(twIdx.changeP):"-",subColor:pColor(twIdx.changeP),big:true,bg:C.card}),
+        usIdx.map(function(idx){return e(StatBox,{key:idx.id,label:idx.name,value:idx.price?idx.price.toLocaleString():"-",sub:fmtP(idx.changeP),subColor:pColor(idx.changeP),bg:C.card})})
+      ),
+
+      // 市場統計
+      mStats&&e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8}},
+        e(StatBox,{label:"上漲家數",value:mStats.up,color:C.up}),
+        e(StatBox,{label:"下跌家數",value:mStats.down,color:C.down}),
+        e(StatBox,{label:"持平",value:mStats.flat,color:C.flat}),
+        e(StatBox,{label:"漲停",value:mStats.limit_up,color:C.danger}),
+        e(StatBox,{label:"跌停",value:mStats.limit_down,color:C.accent}),
+        e(StatBox,{label:"總成交量",value:fmtVol(mStats.total_volume)})
+      ),
+
+      // 漲幅 / 跌幅 / 量 排行
+      mStats&&e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:12}},
+        // Top 漲幅
+        e("div",{style:Object.assign({},cS,{padding:14})},
+          e("h4",{style:{margin:"0 0 10px",fontSize:13,fontWeight:700,color:C.up}},"🔥 今日漲幅 TOP 10"),
+          (mStats.top_gainers||[]).map(function(s,i){return e("div",{key:i,onClick:function(){var tw=twList.find(function(t){return t.id===s.id});if(tw){setSel(tw);setTab("tw")}},style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid "+C.border+"66",cursor:"pointer",fontSize:12}},
+            e("span",null,e("span",{style:{color:C.textMuted,fontFamily:M,marginRight:6,fontSize:10}},i+1),e("span",{style:{fontWeight:600}},s.name),e("span",{style:{color:C.textMuted,fontFamily:M,marginLeft:4,fontSize:10}},s.id)),
+            e("span",{style:{color:C.up,fontFamily:M,fontWeight:700}},fmtP(s.changeP)))
+          })
+        ),
+        // Top 跌幅
+        e("div",{style:Object.assign({},cS,{padding:14})},
+          e("h4",{style:{margin:"0 0 10px",fontSize:13,fontWeight:700,color:C.down}},"💧 今日跌幅 TOP 10"),
+          (mStats.top_losers||[]).map(function(s,i){return e("div",{key:i,onClick:function(){var tw=twList.find(function(t){return t.id===s.id});if(tw){setSel(tw);setTab("tw")}},style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid "+C.border+"66",cursor:"pointer",fontSize:12}},
+            e("span",null,e("span",{style:{color:C.textMuted,fontFamily:M,marginRight:6,fontSize:10}},i+1),e("span",{style:{fontWeight:600}},s.name),e("span",{style:{color:C.textMuted,fontFamily:M,marginLeft:4,fontSize:10}},s.id)),
+            e("span",{style:{color:C.down,fontFamily:M,fontWeight:700}},fmtP(s.changeP)))
+          })
+        ),
+        // Top 成交量
+        e("div",{style:Object.assign({},cS,{padding:14})},
+          e("h4",{style:{margin:"0 0 10px",fontSize:13,fontWeight:700,color:C.blue}},"📊 成交量 TOP 10"),
+          (mStats.top_volume||[]).map(function(s,i){return e("div",{key:i,onClick:function(){var tw=twList.find(function(t){return t.id===s.id});if(tw){setSel(tw);setTab("tw")}},style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid "+C.border+"66",cursor:"pointer",fontSize:12}},
+            e("span",null,e("span",{style:{color:C.textMuted,fontFamily:M,marginRight:6,fontSize:10}},i+1),e("span",{style:{fontWeight:600}},s.name),e("span",{style:{color:C.textMuted,fontFamily:M,marginLeft:4,fontSize:10}},s.id)),
+            e("span",{style:{color:C.blue,fontFamily:M,fontWeight:600}},fmtVol(s.volume)))
+          })
+        )
+      ),
+
+      // 無 mStats fallback
+      !mStats&&e("div",{style:Object.assign({},cS,{padding:30,textAlign:"center"})},
+        e("div",{style:{fontSize:14,color:C.textDim}},"市場統計資料將在下次 Actions 更新後自動產生"))
     ),
 
-    // ══ TW STOCKS ══
-    !loading&&data&&tab==="tw"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
-      // Search
+    // ═══════════════════════════════════
+    // TAB: 即時快訊
+    // ═══════════════════════════════════
+    !loading&&data&&tab==="news"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:10}},
+      e(SectionCard,{icon:"⚡",title:"即時快訊",desc:"自動偵測漲跌停、法人大單、技術面訊號、台美連動"}),
+      newsAlerts.length===0?e("div",{style:Object.assign({},cS,{padding:30,textAlign:"center"})},
+        e("div",{style:{fontSize:40,marginBottom:8}},"📭"),
+        e("div",{style:{fontSize:14,color:C.textDim}},"今日暫無重大快訊，或請先更新後端至 v4.0")
+      ):
+      newsAlerts.map(function(a,i){
+        var pBg={high:C.dangerDim,medium:C.warnDim,low:C.surface};
+        var pBorder={high:C.danger,medium:C.warn,low:C.border};
+        return e("div",{key:i,style:Object.assign({},cS,{padding:"12px 16px",borderLeft:"4px solid "+(pBorder[a.priority]||C.border),background:pBg[a.priority]||C.card})},
+          e("div",{style:{display:"flex",alignItems:"center",gap:8}},
+            e("span",{style:{fontSize:18}},a.emoji||"📌"),
+            e("div",{style:{flex:1}},
+              e("div",{style:{fontSize:13,fontWeight:700}},a.title),
+              a.detail&&e("div",{style:{fontSize:11,color:C.textDim,marginTop:2}},a.detail)
+            ),
+            e(Pill,{color:pBorder[a.priority]||C.textMuted},a.priority==="high"?"重要":a.priority==="medium"?"留意":"一般")
+          )
+        )
+      })
+    ),
+
+    // ═══════════════════════════════════
+    // TAB: AI策略
+    // ═══════════════════════════════════
+    !loading&&data&&tab==="ai"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:12}},
+      e(SectionCard,{icon:"🤖",title:"AI 策略訊號",desc:"根據 RSI、KD、MACD 技術指標 + 法人動向綜合分析，追蹤清單 23 檔個股",borderColor:C.purple+"33",gradient:"linear-gradient(135deg,"+C.purple+"11,"+C.surface+")"}),
+      e("div",{style:{fontSize:10,color:C.textMuted,padding:"0 4px"}},"⚠️ 以下訊號僅供參考，不構成投資建議，請搭配自身判斷"),
+
+      aiSigs.length===0?e("div",{style:Object.assign({},cS,{padding:30,textAlign:"center"})},
+        e("div",{style:{fontSize:40,marginBottom:8}},"🔬"),
+        e("div",{style:{fontSize:14,color:C.textDim}},"AI 訊號將在下次 Actions 更新後自動產生（需 v4.0 後端）")
+      ):
+      aiSigs.map(function(sig,i){
+        var sc=sig.score;
+        var bgC=sc>=30?C.accentDim:sc>=15?"rgba(56,189,248,0.08)":sc<=-30?C.dangerDim:sc<=-15?C.warnDim:C.surface;
+        var borderC=sc>=30?C.accent:sc>=15?C.blue:sc<=-30?C.danger:sc<=-15?C.warn:C.border;
+        var recColor=sc>=15?C.up:sc<=-15?C.down:C.textDim;
+        return e("div",{key:i,onClick:function(){var tw=twList.find(function(t){return t.id===sig.id});if(tw){setSel(tw);setTab("tw")}},style:Object.assign({},cS,{padding:16,borderLeft:"4px solid "+borderC,background:bgC,cursor:"pointer"})},
+          e("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"start",flexWrap:"wrap",gap:8}},
+            e("div",{style:{flex:1}},
+              e("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:6}},
+                e("span",{style:{fontSize:16,fontWeight:800}},sig.name),
+                e("span",{style:{fontSize:12,color:C.textMuted,fontFamily:M}},sig.id),
+                e("span",{style:{fontSize:12,fontFamily:M,color:pColor(sig.changeP)}},"$"+sig.price+" "+fmtP(sig.changeP)),
+                sig.ti&&e(TIBadge,{ti:sig.ti})
+              ),
+              e("div",{style:{display:"flex",flexWrap:"wrap",gap:4}},
+                sig.reasons.map(function(r,j){return e(Pill,{key:j,color:borderC},r)})
+              )
+            ),
+            e("div",{style:{textAlign:"right",minWidth:80}},
+              e("div",{style:{fontSize:24,fontWeight:900,fontFamily:M,color:recColor}},sc>0?"+"+sc:sc),
+              e("div",{style:{fontSize:11,fontWeight:700,color:recColor}},sig.recommendation)
+            )
+          )
+        )
+      })
+    ),
+
+    // ═══════════════════════════════════
+    // TAB: 台股監測
+    // ═══════════════════════════════════
+    !loading&&data&&tab==="tw"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:14}},
       e("div",{style:{display:"flex",alignItems:"center",gap:8}},
         e("div",{style:{display:"flex",alignItems:"center",gap:6,background:C.card,borderRadius:8,padding:"7px 10px",border:"1px solid "+C.border,flex:"1 1 200px",maxWidth:280}},
           e("span",{style:{color:C.textMuted}},"🔍"),
@@ -154,41 +282,44 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
         ),
         e("span",{style:{fontSize:11,color:C.textMuted}},"共 "+filteredTW.length+" 檔")
       ),
-      // Detail
+      // Detail panel
       sel&&e("div",{style:Object.assign({},cS,{padding:0,border:"1px solid "+C.accent+"33"})},
         e("div",{style:{padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"start",borderBottom:"1px solid "+C.border,flexWrap:"wrap",gap:12}},
           e("div",null,
             e("h2",{style:{margin:0,fontSize:20,fontWeight:800}},sel.name,e("span",{style:{fontSize:12,color:C.textMuted,marginLeft:8,fontFamily:M}},sel.id)),
-            e("div",{style:{display:"flex",gap:6,marginTop:4}},e(Pill,{color:C.blue},sel.market==="tse"?"上市":"上櫃"))
+            e("div",{style:{display:"flex",gap:6,marginTop:4}},e(Pill,{color:C.blue},sel.market==="tse"?"上市":"上櫃"),sel.ti&&e(TIBadge,{ti:sel.ti}))
           ),
           e("button",{onClick:function(){setSel(null)},style:{background:"transparent",border:"1px solid "+C.border,borderRadius:7,padding:"5px 10px",color:C.textDim,cursor:"pointer",fontSize:11}},"✕")
         ),
-        e("div",{style:{padding:"12px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8}},
-          [{l:"現價",v:"$"+sel.price,c:pColor(sel.changeP)},{l:"漲跌幅",v:fmtP(sel.changeP),c:pColor(sel.changeP)},{l:"開盤",v:"$"+(sel.open||"-")},{l:"最高",v:"$"+(sel.high||"-")},{l:"最低",v:"$"+(sel.low||"-")},{l:"成交量",v:sel.vol_str},{l:"本益比",v:sel.pe?sel.pe.toFixed(1):"N/A"},{l:"殖利率",v:sel.dividend_yield?sel.dividend_yield+"%":"N/A"},{l:"股價淨值比",v:sel.pb?sel.pb.toFixed(2):"N/A"}].map(function(m,i){
+        e("div",{style:{padding:"12px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(110px,1fr))",gap:8}},
+          [{l:"現價",v:"$"+sel.price,c:pColor(sel.changeP)},{l:"漲跌幅",v:fmtP(sel.changeP),c:pColor(sel.changeP)},{l:"開盤",v:"$"+(sel.open||"-")},{l:"最高",v:"$"+(sel.high||"-")},{l:"最低",v:"$"+(sel.low||"-")},{l:"成交量",v:sel.vol_str},{l:"本益比",v:sel.pe?sel.pe.toFixed(1):"N/A"},{l:"殖利率",v:sel.dividend_yield?sel.dividend_yield+"%":"N/A"},{l:"淨值比",v:sel.pb?sel.pb.toFixed(2):"N/A"}].map(function(m,i){
             return e("div",{key:i,style:{background:C.surface,borderRadius:8,padding:8}},
               e("div",{style:{fontSize:9,color:C.textMuted}},m.l),
               e("div",{style:{fontSize:15,fontWeight:800,color:m.c||C.text,fontFamily:M}},m.v))
           })
         ),
-        // Institutional
-        (sel.foreign_buy||sel.trust_buy||sel.dealer_buy)&&e("div",{style:{padding:"0 20px 16px"}},
+        (sel.foreign_buy||sel.trust_buy||sel.dealer_buy)&&e("div",{style:{padding:"0 20px 12px"}},
           e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
             e("div",{style:{fontSize:11,fontWeight:700,marginBottom:6}},"法人買賣超（張）"),
             e("div",{style:{display:"flex",gap:16}},
               [{l:"外資",v:sel.foreign_buy},{l:"投信",v:sel.trust_buy},{l:"自營商",v:sel.dealer_buy}].map(function(f,i){
-                return e("span",{key:i,style:{fontSize:12}},
-                  e("span",{style:{color:C.textMuted}},f.l+" "),
-                  e("span",{style:{fontFamily:M,fontWeight:700,color:f.v>0?C.up:f.v<0?C.down:C.flat}},(f.v>0?"+":"")+f.v)
-                )
+                return e("span",{key:i,style:{fontSize:12}},e("span",{style:{color:C.textMuted}},f.l+" "),e("span",{style:{fontFamily:M,fontWeight:700,color:f.v>0?C.up:f.v<0?C.down:C.flat}},(f.v>0?"+":"")+f.v))
               })
             )
+          )
+        ),
+        // Technical Indicators Panel
+        e("div",{style:{padding:"0 20px 16px"}},
+          e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
+            e("div",{style:{fontSize:11,fontWeight:700,marginBottom:8,color:C.purple}},"📐 技術指標 KD / RSI / MACD"),
+            e(TIPanel,{ti:sel.ti})
           )
         )
       ),
       // Table
       e("div",{style:{overflowX:"auto"}},
         e("table",{style:{width:"100%",borderCollapse:"separate",borderSpacing:"0 4px"}},
-          e("thead",null,e("tr",null,["代號","名稱","現價","漲跌%","成交量","本益比","殖利率","外資","投信","自營商"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
+          e("thead",null,e("tr",null,["代號","名稱","現價","漲跌%","成交量","本益比","殖利率","外資","投信","訊號"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
           e("tbody",null,filteredTW.slice(0,100).map(function(s){
             return e("tr",{key:s.id,onClick:function(){setSel(s)},style:{cursor:"pointer"},
               onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},
@@ -202,22 +333,19 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
               e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M,color:s.dividend_yield>4?C.gold:C.text}},s.dividend_yield?s.dividend_yield+"%":"-"),
               e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M,color:s.foreign_buy>0?C.up:s.foreign_buy<0?C.down:C.flat}},s.foreign_buy||"-"),
               e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M,color:s.trust_buy>0?C.up:s.trust_buy<0?C.down:C.flat}},s.trust_buy||"-"),
-              e("td",{style:{padding:8,background:C.card,borderRadius:"0 8px 8px 0",fontSize:11,fontFamily:M,color:s.dealer_buy>0?C.up:s.dealer_buy<0?C.down:C.flat}},s.dealer_buy||"-")
+              e("td",{style:{padding:8,background:C.card,borderRadius:"0 8px 8px 0"}},s.ti?e(TIBadge,{ti:s.ti}):e("span",{style:{fontSize:10,color:C.textMuted}},"-"))
             )
           }))
         )
       )
     ),
 
-    // ══ IPO ══
-    !loading&&data&&tab==="ipo"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
-      e("div",{style:Object.assign({},cS,{padding:16,background:"linear-gradient(135deg,"+C.accentDim+","+C.surface+")",border:"1px solid "+C.accent+"33"})},
-        e("h3",{style:{margin:"0 0 6px",fontSize:15,fontWeight:700}},"🎫 公開申購 / 新股抽籤追蹤"),
-        e("p",{style:{margin:0,fontSize:12,color:C.textDim}},"資料來源：撿股讚 (wespai.com)，每日自動更新真實申購資訊")
-      ),
-      ipoList.length===0&&e("div",{style:Object.assign({},cS,{padding:30,textAlign:"center"})},
-        e("div",{style:{fontSize:14,color:C.textDim}},"目前無 IPO 申購資料，請先執行一次 Actions 更新")
-      ),
+    // ═══════════════════════════════════
+    // TAB: IPO抽籤
+    // ═══════════════════════════════════
+    !loading&&data&&tab==="ipo"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:14}},
+      e(SectionCard,{icon:"🎫",title:"公開申購 / 新股抽籤追蹤",desc:"資料來源：撿股讚 (wespai.com)，每日自動更新真實申購資訊",borderColor:C.accent+"33",gradient:"linear-gradient(135deg,"+C.accentDim+","+C.surface+")"}),
+      ipoList.length===0&&e("div",{style:Object.assign({},cS,{padding:30,textAlign:"center"})},e("div",{style:{fontSize:14,color:C.textDim}},"目前無 IPO 申購資料")),
       ipoList.map(function(ipo,i){
         var isProfit=ipo.return_rate>0;
         return e("div",{key:i,style:Object.assign({},cS,{padding:16,borderLeft:"4px solid "+(isProfit?C.up:ipo.return_rate<0?C.down:C.flat)})},
@@ -233,32 +361,26 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
                 e("span",null,"承銷價 ",e("strong",{style:{color:C.text}},"$"+ipo.offer_price)),
                 e("span",null,"收盤價 ",e("strong",{style:{color:C.text}},"$"+ipo.close_price)),
                 e("span",null,"報酬率 ",e("strong",{style:{color:isProfit?C.up:C.down}},(isProfit?"+":"")+ipo.return_rate+"%")),
-                e("span",null,"賺賠 ",e("strong",{style:{color:isProfit?C.up:C.down}},(isProfit?"+":"")+ipo.profit_loss.toLocaleString()+"元")),
                 e("span",null,"抽籤日 ",e("strong",{style:{color:C.text}},ipo.draw_date)),
                 ipo.win_rate>0&&e("span",null,"中籤率 ",e("strong",{style:{color:C.text}},ipo.win_rate+"%")),
-                e("span",null,"需準備 ",e("strong",{style:{color:C.text}},"$"+ipo.need_money.toLocaleString()))
+                e("span",null,"需準備 ",e("strong",{style:{color:C.text}},"$"+(ipo.need_money||0).toLocaleString()))
               )
             ),
             e("div",{style:{textAlign:"right",minWidth:70}},
               e("div",{style:{fontSize:24,fontWeight:900,fontFamily:M,color:isProfit?C.up:ipo.return_rate<0?C.down:C.flat}},(isProfit?"+":"")+ipo.return_rate+"%"),
-              e("div",{style:{fontSize:10,color:C.textMuted}},"報酬率")
-            )
+              e("div",{style:{fontSize:10,color:C.textMuted}},"報酬率"))
           )
         )
       })
     ),
 
-    // ══ US STOCKS ══
-    !loading&&data&&tab==="us"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
-      // Indices
+    // ═══════════════════════════════════
+    // TAB: 美股監測
+    // ═══════════════════════════════════
+    !loading&&data&&tab==="us"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:14}},
       usIdx.length>0&&e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:8}},
-        usIdx.map(function(idx,i){var cp=parseFloat(idx.changeP);return e("div",{key:i,style:Object.assign({},cS,{padding:12})},
-          e("div",{style:{fontSize:10,color:C.textMuted,marginBottom:3}},idx.name),
-          e("div",{style:{fontSize:18,fontWeight:800,fontFamily:M}},idx.price.toLocaleString()),
-          e("div",{style:{fontSize:11,fontWeight:700,color:cp>=0?C.up:C.down,fontFamily:M}},fmtP(idx.changeP)))
-        })
+        usIdx.map(function(idx){var cp=parseFloat(idx.changeP);return e(StatBox,{key:idx.id,label:idx.name,value:idx.price?idx.price.toLocaleString():"-",sub:fmtP(idx.changeP),subColor:pColor(idx.changeP),bg:C.card})})
       ),
-      // Search
       e("div",{style:{display:"flex",alignItems:"center",gap:8}},
         e("div",{style:{display:"flex",alignItems:"center",gap:6,background:C.card,borderRadius:8,padding:"7px 10px",border:"1px solid "+C.border,flex:"1 1 200px",maxWidth:280}},
           e("span",{style:{color:C.textMuted}},"🔍"),
@@ -266,7 +388,6 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
         ),
         e("span",{style:{fontSize:11,color:C.textMuted}},"共 "+filteredUS.length+" 檔")
       ),
-      // Detail
       usel&&e("div",{style:Object.assign({},cS,{padding:0,border:"1px solid "+C.blue+"33"})},
         e("div",{style:{padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"start",borderBottom:"1px solid "+C.border,flexWrap:"wrap",gap:12}},
           e("div",null,
@@ -276,7 +397,7 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
           e("button",{onClick:function(){setUsel(null)},style:{background:"transparent",border:"1px solid "+C.border,borderRadius:7,padding:"5px 10px",color:C.textDim,cursor:"pointer",fontSize:11}},"✕")
         ),
         e("div",{style:{padding:"12px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:8}},
-          [{l:"現價(USD)",v:"$"+usel.price,c:pColor(usel.changeP)},{l:"漲跌",v:fmtP(usel.changeP),c:pColor(usel.changeP)},{l:"市值",v:usel.marketCap?(usel.marketCap>=1e12?"$"+(usel.marketCap/1e12).toFixed(2)+"T":"$"+(usel.marketCap/1e9).toFixed(0)+"B"):"-"},{l:"52W高",v:usel.fiftyTwoWeekHigh?"$"+usel.fiftyTwoWeekHigh:"-"},{l:"52W低",v:usel.fiftyTwoWeekLow?"$"+usel.fiftyTwoWeekLow:"-"}].map(function(m,i){
+          [{l:"現價(USD)",v:"$"+usel.price,c:pColor(usel.changeP)},{l:"漲跌",v:fmtP(usel.changeP),c:pColor(usel.changeP)},{l:"成交量",v:usel.volume?fmtVol(usel.volume):"-"}].map(function(m,i){
             return e("div",{key:i,style:{background:C.surface,borderRadius:8,padding:10}},
               e("div",{style:{fontSize:9,color:C.textMuted}},m.l),
               e("div",{style:{fontSize:16,fontWeight:800,color:m.c||C.text,fontFamily:M}},m.v))
@@ -292,47 +413,44 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
           )
         )
       ),
-      // Table
       e("div",{style:{overflowX:"auto"}},
         e("table",{style:{width:"100%",borderCollapse:"separate",borderSpacing:"0 4px"}},
-          e("thead",null,e("tr",null,["代號","名稱","產業","現價(USD)","漲跌%","成交量","台股連動"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
+          e("thead",null,e("tr",null,["代號","名稱","產業","現價(USD)","漲跌%","成交量"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
           e("tbody",null,filteredUS.map(function(s){var cp=parseFloat(s.changeP);return e("tr",{key:s.id,onClick:function(){setUsel(s)},style:{cursor:"pointer"},
             onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},
             onMouseLeave:function(ev){ev.currentTarget.style.background=C.card}},
             e("td",{style:{padding:8,background:C.card,borderRadius:"8px 0 0 8px",fontFamily:M,fontSize:13,fontWeight:800,color:C.blue}},s.id),
-            e("td",{style:{padding:8,background:C.card,fontWeight:700,fontSize:12}},s.name||s.name_en||s.id),
+            e("td",{style:{padding:8,background:C.card,fontWeight:700,fontSize:12}},s.name||s.name_en),
             e("td",{style:{padding:8,background:C.card}},s.sector?e(Pill,{color:C.purple},s.sector):"-"),
             e("td",{style:{padding:8,background:C.card,fontFamily:M,fontWeight:800,fontSize:14}},"$"+s.price),
             e("td",{style:{padding:8,background:C.card,color:cp>=0?C.up:C.down,fontFamily:M,fontWeight:700,fontSize:12}},fmtP(s.changeP)),
-            e("td",{style:{padding:8,background:C.card,fontSize:11,color:C.textDim}},s.volume?fmtVol(s.volume):"-"),
-            e("td",{style:{padding:8,background:C.card,borderRadius:"0 8px 8px 0"}},s.tw_related&&s.tw_related.length>0?e("span",{style:{fontSize:10,color:C.orange}},s.tw_related.join(", ")):"-")
+            e("td",{style:{padding:8,background:C.card,borderRadius:"0 8px 8px 0",fontSize:11,color:C.textDim}},s.volume?fmtVol(s.volume):"-")
           )}))
         )
       )
     ),
 
-    // ══ CORRELATION ══
-    !loading&&data&&tab==="link"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
-      e("div",{style:Object.assign({},cS,{padding:16,background:"linear-gradient(135deg,"+C.orange+"11,"+C.surface+")",border:"1px solid "+C.orange+"33"})},
-        e("h3",{style:{margin:"0 0 6px",fontSize:15,fontWeight:700}},"🔗 台美供應鏈連動分析"),
-        e("p",{style:{margin:0,fontSize:12,color:C.textDim}},"美股龍頭波動超過 2% 時，自動提示相關台股供應鏈標的")
-      ),
+    // ═══════════════════════════════════
+    // TAB: 台美連動
+    // ═══════════════════════════════════
+    !loading&&data&&tab==="link"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:14}},
+      e(SectionCard,{icon:"🔗",title:"台美供應鏈連動分析",desc:"美股龍頭波動超過 2% 時，自動提示相關台股供應鏈標的",borderColor:C.orange+"33",gradient:"linear-gradient(135deg,"+C.orange+"11,"+C.surface+")"}),
       alerts.length===0?e("div",{style:Object.assign({},cS,{padding:20,textAlign:"center"})},
         e("div",{style:{fontSize:40,marginBottom:8}},"✅"),
         e("div",{style:{fontSize:14,color:C.textDim}},"今日美股無重大波動（< 2%），暫無連動警報")
       ):
-      alerts.map(function(a,i){var cp=parseFloat(a.cp||a.us_changeP||0);return e("div",{key:i,style:Object.assign({},cS,{padding:16,borderLeft:"4px solid "+(cp>0?C.up:C.down)})},
+      alerts.map(function(a,i){var cp=parseFloat(a.us_changeP||0);return e("div",{key:i,style:Object.assign({},cS,{padding:16,borderLeft:"4px solid "+(cp>0?C.up:C.down)})},
         e("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}},
           e("div",{style:{display:"flex",alignItems:"center",gap:8}},
             e("span",{style:{fontSize:22}},cp>0?"📈":"📉"),
-            e("span",{style:{fontSize:16,fontWeight:800}},a.name||a.us_name||""),
-            e("span",{style:{fontSize:14,color:C.textMuted,fontFamily:M}},a.us||a.us_symbol||"")
+            e("span",{style:{fontSize:16,fontWeight:800}},a.us_name||""),
+            e("span",{style:{fontSize:14,color:C.textMuted,fontFamily:M}},a.us_symbol||"")
           ),
           e("span",{style:{fontSize:20,fontWeight:900,fontFamily:M,color:cp>0?C.up:C.down}},(cp>0?"+":"")+cp.toFixed(2)+"%")
         ),
-        e("div",{style:{fontSize:13,color:C.textDim,marginBottom:10}},a.msg||a.message||""),
-        (a.tw||a.tw_related)&&e("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
-          (a.tw||a.tw_related||[]).map(function(tid){return e("span",{key:tid,onClick:function(){var tw=twList.find(function(s){return s.id===tid});if(tw){setSel(tw);setTab("tw")}},
+        e("div",{style:{fontSize:13,color:C.textDim,marginBottom:10}},a.message||""),
+        a.tw_related&&e("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
+          a.tw_related.map(function(tid){return e("span",{key:tid,onClick:function(){var tw=twList.find(function(s){return s.id===tid});if(tw){setSel(tw);setTab("tw")}},
             style:{padding:"5px 12px",borderRadius:8,background:cp>0?C.accentDim:C.dangerDim,border:"1px solid "+(cp>0?C.accent:C.danger)+"33",color:cp>0?C.accent:C.danger,fontSize:12,fontWeight:700,cursor:"pointer"}},tid)
           })
         )
@@ -342,7 +460,7 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
 
   // FOOTER
   e("footer",{style:{padding:"14px 20px",borderTop:"1px solid "+C.border,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:6}},
-    e("span",{style:{fontSize:9,color:C.textMuted}},"台美股日監測 Agent v3.1 · 100% 真實數據 · TWSE / TPEx / Yahoo Finance / wespai.com"),
+    e("span",{style:{fontSize:9,color:C.textMuted}},"台美股日監測 Agent v4.0 · 100% 真實數據 · TWSE / TPEx / Yahoo Finance / wespai.com"),
     e("span",{style:{fontSize:9,color:C.textMuted}},"⚠️ 資訊僅供參考 · 投資有風險")
   )
 )
