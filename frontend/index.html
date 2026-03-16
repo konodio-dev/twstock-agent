@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>台股日監測 Agent Pro</title>
-<meta name="description" content="AI-Powered Taiwan Stock Daily Intelligence">
+<title>台美股日監測 Agent Pro</title>
+<meta name="description" content="AI-Powered TW + US Stock Daily Intelligence">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,6 @@ body{background:#060b14;overflow-x:hidden}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:#0d1420}
 ::-webkit-scrollbar-thumb{background:#2a4060;border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:#3a5580}
 ::selection{background:rgba(0,229,176,0.3);color:#fff}
 </style>
 </head>
@@ -24,358 +23,307 @@ body{background:#060b14;overflow-x:hidden}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script>
-// ═══ React Shortcuts ═══
-const {useState,useEffect,useCallback,useRef,useMemo,createElement:h,Fragment}=React;
-const e=h; // alias
+var e=React.createElement,useState=React.useState,useEffect=React.useEffect,useRef=React.useRef,useMemo=React.useMemo;
+var C={bg:"#060b14",surface:"#0d1420",card:"#131c2e",cardHover:"#182438",border:"#1e2d45",accent:"#00e5b0",accentDim:"rgba(0,229,176,0.12)",warn:"#fbbf24",warnDim:"rgba(251,191,36,0.12)",danger:"#f43f5e",dangerDim:"rgba(244,63,94,0.12)",up:"#00e5b0",down:"#f43f5e",flat:"#64748b",text:"#e8edf5",textDim:"#8b9ab8",textMuted:"#4a5a78",gold:"#fbbf24",purple:"#a78bfa",blue:"#38bdf8",orange:"#fb923c"};
+var F="'Noto Sans TC',system-ui,sans-serif",M="'JetBrains Mono',monospace";
+var cS={background:C.card,borderRadius:14,border:"1px solid "+C.border,overflow:"hidden"};
+var hS={padding:"14px 18px",borderBottom:"1px solid "+C.border,fontSize:14,fontWeight:700,display:"flex",alignItems:"center",gap:8};
 
-// ═══ DESIGN TOKENS ═══
-const C={bg:"#060b14",surface:"#0d1420",card:"#131c2e",cardHover:"#182438",border:"#1e2d45",borderActive:"#2a4060",accent:"#00e5b0",accentDim:"rgba(0,229,176,0.12)",accentGlow:"rgba(0,229,176,0.25)",warn:"#fbbf24",warnDim:"rgba(251,191,36,0.12)",danger:"#f43f5e",dangerDim:"rgba(244,63,94,0.12)",up:"#00e5b0",down:"#f43f5e",flat:"#64748b",text:"#e8edf5",textDim:"#8b9ab8",textMuted:"#4a5a78",gold:"#fbbf24",purple:"#a78bfa",blue:"#38bdf8",orange:"#fb923c"};
-const FONT="'Noto Sans TC','SF Pro Display',system-ui,sans-serif";
-const MONO="'JetBrains Mono','SF Mono','Fira Code',monospace";
-const cardS={background:C.card,borderRadius:14,border:"1px solid "+C.border,overflow:"hidden"};
-const hdrS={padding:"14px 18px",borderBottom:"1px solid "+C.border,fontSize:14,fontWeight:700,display:"flex",alignItems:"center",gap:8};
+// ── DATA URL (reads from your GitHub Pages) ──
+var DATA_URL="https://konodio-dev.github.io/twstock-agent/frontend/data/latest.json";
 
-// ═══ SCORING ENGINE ═══
-function calcScore(s){let sc=50;if(s.eps>0)sc+=Math.min(s.eps*0.8,12);if(s.roe>15)sc+=Math.min((s.roe-15)*0.5,8);if(s.pe>0&&s.pe<20)sc+=6;else if(s.pe>0&&s.pe<30)sc+=3;if(s.revenue_yoy>20)sc+=8;else if(s.revenue_yoy>10)sc+=5;else if(s.revenue_yoy>0)sc+=2;else if(s.revenue_yoy<-10)sc-=8;const net=(s.foreign_buy||0)+(s.trust_buy||0)+(s.dealer_buy||0);if(net>5000)sc+=10;else if(net>1000)sc+=6;else if(net>0)sc+=3;else if(net<-3000)sc-=8;if(s.change>0)sc+=4;if(s.vol>10000)sc+=3;if(["半導體","AI/雲端","電動車"].includes(s.sector))sc+=6;return Math.max(0,Math.min(100,Math.round(sc)))}
-function getScoreLabel(sc){if(sc>=85)return{l:"強力推薦",e:"🔥"};if(sc>=70)return{l:"建議關注",e:"👀"};if(sc>=50)return{l:"中性觀望",e:"⏸️"};return{l:"建議迴避",e:"⚠️"}}
-function getStrat(s){if(s.pe>0&&s.pe<15&&s.roe>12&&s.dividend_yield>4)return"存股標的";if(s.rating>=85&&s.revenue_yoy>15)return"長線價值";if(s.change>0&&s.vol>20000)return"短線動能";return"波段操作"}
+// ── SCORING ──
+function calcScore(s){var sc=50;if(s.eps>0)sc+=Math.min(s.eps*0.8,12);if(s.roe>15)sc+=Math.min((s.roe-15)*0.5,8);if(s.pe>0&&s.pe<20)sc+=6;else if(s.pe>0&&s.pe<30)sc+=3;if(s.revenue_yoy>20)sc+=8;else if(s.revenue_yoy>10)sc+=5;else if(s.revenue_yoy>0)sc+=2;else if(s.revenue_yoy<-10)sc-=8;var net=(s.foreign_buy||0)+(s.trust_buy||0)+(s.dealer_buy||0);if(net>5000)sc+=10;else if(net>1000)sc+=6;else if(net>0)sc+=3;else if(net<-3000)sc-=8;if(s.change>0)sc+=4;if(s.vol>10000)sc+=3;if(["半導體","AI/雲端","電動車"].includes(s.sector))sc+=6;return Math.max(0,Math.min(100,Math.round(sc)))}
+function scoreLabel(sc){if(sc>=85)return"強力推薦";if(sc>=70)return"建議關注";if(sc>=50)return"中性觀望";return"建議迴避"}
 
-// ═══ STOCK DATABASE ═══
-function buildStocks(){
-const raw=[
-{id:"2330",name:"台積電",sector:"半導體",market:"tse",price:1025,prev:1018,vol:28453,pe:28.5,eps:36.2,roe:28.1,revenue_yoy:33.2,dividend_yield:1.8,pb:7.2,foreign_buy:5230,trust_buy:120,dealer_buy:-45,news:"CoWoS先進封裝產能擴建至月產4萬片，2026全年營收目標上修至3.2兆",cooperation:"Apple M5晶片獨家代工 | NVIDIA GB300/Rubin供應鏈 | AMD MI400代工",short_target:1080,long_target:1250,stop_loss:960,fin:{gm:58.8,om:48.2}},
-{id:"2454",name:"聯發科",sector:"半導體",market:"tse",price:1580,prev:1565,vol:8234,pe:19.2,eps:82.3,roe:22.4,revenue_yoy:18.7,dividend_yield:3.2,pb:4.5,foreign_buy:2150,trust_buy:380,dealer_buy:120,news:"天璣9400+旗艦SoC獲三星S26/OPPO大單，AI手機市佔持續提升至35%",cooperation:"NVIDIA車用AI晶片聯合開發 | MediaTek Dimensity Auto平台",short_target:1650,long_target:1900,stop_loss:1480,fin:{gm:49.5,om:22.8}},
-{id:"2317",name:"鴻海",sector:"電子零組件",market:"tse",price:218,prev:215,vol:45670,pe:12.8,eps:17.1,roe:15.3,revenue_yoy:22.5,dividend_yield:4.1,pb:1.9,foreign_buy:8900,trust_buy:-230,dealer_buy:560,news:"墨西哥AI伺服器廠投產，GB200機櫃出貨量Q2季增60%",cooperation:"NVIDIA AI伺服器組裝 | Apple iPhone 17全系列代工 | 鴻華先進電動車",short_target:235,long_target:280,stop_loss:200,fin:{gm:6.8,om:3.5}},
-{id:"2382",name:"廣達",sector:"AI/雲端",market:"tse",price:345,prev:338,vol:18920,pe:22.1,eps:15.6,roe:20.5,revenue_yoy:42.8,dividend_yield:2.8,pb:4.8,foreign_buy:6780,trust_buy:890,dealer_buy:340,news:"AI伺服器出貨量季增40%，Microsoft Azure新世代機櫃獨家供應",cooperation:"Microsoft Azure | Google Cloud TPU機櫃 | Meta MTIA伺服器",short_target:370,long_target:420,stop_loss:310,fin:{gm:8.2,om:4.5}},
-{id:"6669",name:"緯穎",sector:"AI/雲端",market:"tse",price:2180,prev:2150,vol:1890,pe:25.3,eps:86.2,roe:32.1,revenue_yoy:55.6,dividend_yield:2.1,pb:8.5,foreign_buy:450,trust_buy:120,dealer_buy:80,news:"Meta新一代AI資料中心機櫃訂單確認，全年營收挑戰4000億",cooperation:"Meta AI資料中心ODM | Microsoft液冷伺服器",short_target:2350,long_target:2700,stop_loss:2000,fin:{gm:7.5,om:5.8}},
-{id:"3661",name:"世芯-KY",sector:"半導體",market:"tse",price:2850,prev:2810,vol:2340,pe:32.5,eps:87.7,roe:35.2,revenue_yoy:48.5,dividend_yield:0.8,pb:12.3,foreign_buy:890,trust_buy:230,dealer_buy:120,news:"Amazon Graviton5/Google TPU v6 ASIC設計案量產出貨放量",cooperation:"Amazon客製化Graviton晶片 | Google TPU ASIC設計服務",short_target:3050,long_target:3500,stop_loss:2650,fin:{gm:38.5,om:28.6}},
-{id:"3037",name:"欣興",sector:"電子零組件",market:"tse",price:235,prev:230,vol:9870,pe:15.8,eps:14.9,roe:19.5,revenue_yoy:28.3,dividend_yield:3.5,pb:3.2,foreign_buy:3450,trust_buy:670,dealer_buy:230,news:"ABF載板受惠AI晶片升級，高階封裝基板產能滿載至2027",cooperation:"NVIDIA/AMD高階ABF載板 | Intel封裝基板",short_target:255,long_target:300,stop_loss:215,fin:{gm:28.5,om:18.2}},
-{id:"2881",name:"富邦金",sector:"金融保險",market:"tse",price:92.5,prev:91.8,vol:15670,pe:11.2,eps:8.25,roe:12.8,revenue_yoy:8.5,dividend_yield:5.2,pb:1.4,foreign_buy:2300,trust_buy:-120,dealer_buy:450,news:"壽險投資收益回穩，數位金融服務成長25%，2025年股利4.8元創新高",cooperation:"LINE Bank數位金融 | 富邦AI理財平台",short_target:97,long_target:108,stop_loss:86,fin:{gm:0,om:0}},
-{id:"2882",name:"國泰金",sector:"金融保險",market:"tse",price:68.3,prev:67.5,vol:22340,pe:13.5,eps:5.06,roe:10.2,revenue_yoy:12.3,dividend_yield:4.8,pb:1.3,foreign_buy:4500,trust_buy:230,dealer_buy:120,news:"Cathay AI理財機器人用戶突破50萬，FinTech業務占比提升至18%",cooperation:"國泰AI理財 | CubieAI合作夥伴",short_target:72,long_target:82,stop_loss:63,fin:{gm:0,om:0}},
-{id:"2886",name:"兆豐金",sector:"金融保險",market:"tse",price:48.6,prev:48.2,vol:18900,pe:14.8,eps:3.28,roe:9.8,revenue_yoy:6.2,dividend_yield:5.5,pb:1.5,foreign_buy:1200,trust_buy:340,dealer_buy:180,news:"官股行庫龍頭，配息穩定連續20年不間斷，殖利率高達5.5%",cooperation:"政府金融機構合作",short_target:51,long_target:56,stop_loss:45,fin:{gm:0,om:0}},
-{id:"3711",name:"日月光投控",sector:"半導體",market:"tse",price:178,prev:175,vol:12340,pe:16.5,eps:10.8,roe:18.2,revenue_yoy:15.3,dividend_yield:3.8,pb:2.8,foreign_buy:3400,trust_buy:560,dealer_buy:230,news:"先進封裝訂單滿載，高雄K28廠2026Q3量產，受惠HBM封裝需求",cooperation:"Intel/AMD封測合作 | NVIDIA HBM先進封裝",short_target:190,long_target:220,stop_loss:165,fin:{gm:22.5,om:12.8}},
-{id:"6488",name:"環球晶",sector:"半導體",market:"tse",price:580,prev:572,vol:4560,pe:20.3,eps:28.6,roe:17.8,revenue_yoy:15.6,dividend_yield:2.5,pb:3.8,foreign_buy:1890,trust_buy:340,dealer_buy:120,news:"12吋矽晶圓長約穩定，SiC碳化矽基板產線擴建中",cooperation:"意法半導體SiC晶圓 | 全球第三大矽晶圓廠",short_target:620,long_target:700,stop_loss:540,fin:{gm:42.8,om:28.5}},
-{id:"4919",name:"新唐",sector:"半導體",market:"tse",price:198,prev:195,vol:5670,pe:18.9,eps:10.5,roe:16.8,revenue_yoy:22.1,dividend_yield:2.8,pb:3.2,foreign_buy:1200,trust_buy:340,dealer_buy:90,news:"車用MCU與BMIC需求回溫，Panasonic半導體整合綜效浮現",cooperation:"Panasonic半導體事業 | NTCJ車用晶片",short_target:215,long_target:250,stop_loss:180,fin:{gm:35.2,om:18.5}},
-{id:"2603",name:"長榮",sector:"航運",market:"tse",price:198,prev:202,vol:18900,pe:8.5,eps:23.3,roe:25.1,revenue_yoy:-8.2,dividend_yield:6.8,pb:1.2,foreign_buy:-3400,trust_buy:-560,dealer_buy:-230,news:"紅海危機運價回落但仍高於歷史均值，減資計畫持續推進",cooperation:"長榮海運全球聯盟",short_target:188,long_target:175,stop_loss:210,fin:{gm:28.5,om:22.1}},
-{id:"6770",name:"力積電",sector:"半導體",market:"tse",price:32.8,prev:33.5,vol:35670,pe:-8.2,eps:-4.0,roe:-5.3,revenue_yoy:-12.5,dividend_yield:0,pb:0.8,foreign_buy:-2300,trust_buy:-890,dealer_buy:-450,news:"DRAM市況仍低迷，轉型晶圓代工進度延後，營運仍處虧損",cooperation:"記憶體代工訂單縮減",short_target:30,long_target:28,stop_loss:35,fin:{gm:-8.5,om:-22.1}},
-{id:"6547",name:"高端疫苗",sector:"生技醫療",market:"otc",price:42.5,prev:43.2,vol:8900,pe:-15.3,eps:-2.78,roe:-8.5,revenue_yoy:-35.2,dividend_yield:0,pb:2.8,foreign_buy:-560,trust_buy:-230,dealer_buy:-120,news:"腸病毒疫苗EV71三期臨床中，新冠疫苗營收近乎歸零",cooperation:"WHO疫苗預認證申請 | NIH合作開發",short_target:38,long_target:35,stop_loss:45,fin:{gm:-15.2,om:-85.6}},
-{id:"2327",name:"國巨",sector:"電子零組件",market:"tse",price:568,prev:562,vol:3450,pe:16.2,eps:35.1,roe:18.5,revenue_yoy:12.8,dividend_yield:3.5,pb:3.1,foreign_buy:1560,trust_buy:230,dealer_buy:90,news:"併購KEMET綜效持續發酵，車用MLCC需求強勁成長",cooperation:"KEMET集團 | 車用被動元件全球前三",short_target:600,long_target:680,stop_loss:530,fin:{gm:38.2,om:22.5}},
-{id:"2345",name:"智邦",sector:"AI/雲端",market:"tse",price:625,prev:615,vol:5670,pe:28.5,eps:21.9,roe:22.8,revenue_yoy:35.6,dividend_yield:1.8,pb:6.8,foreign_buy:2340,trust_buy:450,dealer_buy:180,news:"AI交換器出貨量大增，800G光模組需求帶動網通設備營收創高",cooperation:"Arista Networks供應鏈 | 雲端資料中心交換器",short_target:670,long_target:780,stop_loss:580,fin:{gm:22.5,om:15.8}},
-{id:"3443",name:"創意",sector:"半導體",market:"tse",price:1680,prev:1660,vol:1890,pe:35.2,eps:47.7,roe:28.5,revenue_yoy:42.3,dividend_yield:1.2,pb:10.5,foreign_buy:560,trust_buy:180,dealer_buy:90,news:"台積電轉投資ASIC設計服務龍頭，受惠客製化AI晶片大趨勢",cooperation:"台積電集團 | 全球ASIC設計服務",short_target:1800,long_target:2100,stop_loss:1550,fin:{gm:45.2,om:32.8}},
-{id:"2357",name:"華碩",sector:"電子零組件",market:"tse",price:528,prev:522,vol:4560,pe:14.5,eps:36.4,roe:18.2,revenue_yoy:15.8,dividend_yield:4.2,pb:2.6,foreign_buy:1890,trust_buy:340,dealer_buy:120,news:"AI PC筆電出貨量創新高，ROG品牌全球電競市佔第一",cooperation:"NVIDIA AI PC合作 | Intel/AMD主機板",short_target:560,long_target:620,stop_loss:490,fin:{gm:15.8,om:8.5}},
-];
-return raw.map(function(s){var ch=s.price-s.prev;var cp=((ch)/s.prev*100);var o=Object.assign({},s,{change:ch,changeP:cp.toFixed(2),vol_str:s.vol>10000?(s.vol/10000).toFixed(1)+"萬":s.vol.toLocaleString()});o.rating=calcScore(o);o.strategy=getStrat(o);return o});
-}
+// ── TW STOCK DATA (fallback demo) ──
+function demoTW(){var raw=[
+{id:"2330",name:"台積電",sector:"半導體",price:1025,prev:1018,vol:28453,pe:28.5,eps:36.2,roe:28.1,revenue_yoy:33.2,dividend_yield:1.8,pb:7.2,foreign_buy:5230,trust_buy:120,dealer_buy:-45,news:"CoWoS先進封裝產能擴建，2026全年營收目標上修",cooperation:"Apple M5 | NVIDIA GB300 | AMD MI400",short_target:1080,long_target:1250,stop_loss:960,fin:{gm:58.8}},
+{id:"2454",name:"聯發科",sector:"半導體",price:1580,prev:1565,vol:8234,pe:19.2,eps:82.3,roe:22.4,revenue_yoy:18.7,dividend_yield:3.2,pb:4.5,foreign_buy:2150,trust_buy:380,dealer_buy:120,news:"天璣9400+旗艦SoC獲三星/OPPO大單",cooperation:"NVIDIA車用AI晶片",short_target:1650,long_target:1900,stop_loss:1480,fin:{gm:49.5}},
+{id:"2317",name:"鴻海",sector:"電子零組件",price:218,prev:215,vol:45670,pe:12.8,eps:17.1,roe:15.3,revenue_yoy:22.5,dividend_yield:4.1,pb:1.9,foreign_buy:8900,trust_buy:-230,dealer_buy:560,news:"墨西哥AI伺服器廠投產，GB200出貨加速",cooperation:"NVIDIA AI伺服器 | Apple iPhone 17",short_target:235,long_target:280,stop_loss:200,fin:{gm:6.8}},
+{id:"2382",name:"廣達",sector:"AI/雲端",price:345,prev:338,vol:18920,pe:22.1,eps:15.6,roe:20.5,revenue_yoy:42.8,dividend_yield:2.8,pb:4.8,foreign_buy:6780,trust_buy:890,dealer_buy:340,news:"AI伺服器出貨量季增40%，Azure獨家供應",cooperation:"Microsoft | Google | Meta",short_target:370,long_target:420,stop_loss:310,fin:{gm:8.2}},
+{id:"6669",name:"緯穎",sector:"AI/雲端",price:2180,prev:2150,vol:1890,pe:25.3,eps:86.2,roe:32.1,revenue_yoy:55.6,dividend_yield:2.1,pb:8.5,foreign_buy:450,trust_buy:120,dealer_buy:80,news:"Meta AI資料中心機櫃訂單確認",cooperation:"Meta | Microsoft液冷伺服器",short_target:2350,long_target:2700,stop_loss:2000,fin:{gm:7.5}},
+{id:"3661",name:"世芯-KY",sector:"半導體",price:2850,prev:2810,vol:2340,pe:32.5,eps:87.7,roe:35.2,revenue_yoy:48.5,dividend_yield:0.8,pb:12.3,foreign_buy:890,trust_buy:230,dealer_buy:120,news:"Amazon/Google ASIC量產放量",cooperation:"Amazon Graviton | Google TPU",short_target:3050,long_target:3500,stop_loss:2650,fin:{gm:38.5}},
+{id:"2881",name:"富邦金",sector:"金融保險",price:92.5,prev:91.8,vol:15670,pe:11.2,eps:8.25,roe:12.8,revenue_yoy:8.5,dividend_yield:5.2,pb:1.4,foreign_buy:2300,trust_buy:-120,dealer_buy:450,news:"股利4.8元創新高，殖利率5.2%",cooperation:"LINE Bank",short_target:97,long_target:108,stop_loss:86,fin:{gm:0}},
+{id:"2886",name:"兆豐金",sector:"金融保險",price:48.6,prev:48.2,vol:18900,pe:14.8,eps:3.28,roe:9.8,revenue_yoy:6.2,dividend_yield:5.5,pb:1.5,foreign_buy:1200,trust_buy:340,dealer_buy:180,news:"配息穩定連續20年，殖利率5.5%",cooperation:"官股行庫",short_target:51,long_target:56,stop_loss:45,fin:{gm:0}},
+{id:"3037",name:"欣興",sector:"電子零組件",price:235,prev:230,vol:9870,pe:15.8,eps:14.9,roe:19.5,revenue_yoy:28.3,dividend_yield:3.5,pb:3.2,foreign_buy:3450,trust_buy:670,dealer_buy:230,news:"ABF載板滿載，AI晶片基板需求激增",cooperation:"NVIDIA/AMD載板",short_target:255,long_target:300,stop_loss:215,fin:{gm:28.5}},
+{id:"3443",name:"創意",sector:"半導體",price:1680,prev:1660,vol:1890,pe:35.2,eps:47.7,roe:28.5,revenue_yoy:42.3,dividend_yield:1.2,pb:10.5,foreign_buy:560,trust_buy:180,dealer_buy:90,news:"台積電轉投資ASIC龍頭，客製化AI晶片趨勢",cooperation:"台積電集團",short_target:1800,long_target:2100,stop_loss:1550,fin:{gm:45.2}},
+];return raw.map(function(s){var ch=s.price-s.prev;s.change=ch;s.changeP=(ch/s.prev*100).toFixed(2);s.vol_str=s.vol>10000?(s.vol/10000).toFixed(1)+"萬":s.vol+"";s.rating=calcScore(s);s.strategy=s.dividend_yield>4?"存股標的":s.rating>=85?"長線價值":"波段操作";return s})}
 
-function buildIPOs(){return[
-{id:"6980",name:"瑞愛生醫",type:"上櫃",price:68,market_price:95,profit_est:"+39.7%",draw_date:"2026/03/18",listing_date:"2026/03/25",sector:"生技醫療",score:82,status:"申購中",shares:1000,deposit:20,desc:"微創醫材研發，心血管介入器材全球佈局，已取得FDA 510(k)認證",risk:"臨床風險偏高，海外市場拓展不確定性"},
-{id:"6985",name:"鉅晶電子",type:"上市",price:125,market_price:168,profit_est:"+34.4%",draw_date:"2026/03/20",listing_date:"2026/03/28",sector:"半導體",score:88,status:"即將申購",shares:800,deposit:20,desc:"車用功率半導體IC設計，IGBT/SiC模組客戶含BOSCH、Denso",risk:"車市景氣波動，價格競爭壓力"},
-{id:"6990",name:"雲智科技",type:"上櫃",price:88,market_price:132,profit_est:"+50.0%",draw_date:"2026/03/22",listing_date:"2026/04/01",sector:"AI/雲端",score:91,status:"即將申購",shares:1200,deposit:20,desc:"企業級AI私有雲解決方案，已獲台塑、中鋼等大型企業訂單",risk:"AI市場競爭激烈，大廠切入風險"},
-{id:"6975",name:"綠能材料",type:"上櫃",price:52,market_price:61,profit_est:"+17.3%",draw_date:"2026/03/12",listing_date:"2026/03/19",sector:"綠能環保",score:65,status:"已開獎",shares:600,deposit:20,desc:"太陽能背板材料，受惠台灣綠電政策2025年20%目標",risk:"太陽能產業供過於求，政策補貼減少"},
-{id:"6972",name:"宏聯光電",type:"上市",price:145,market_price:210,profit_est:"+44.8%",draw_date:"2026/03/08",listing_date:"2026/03/17",sector:"電子零組件",score:86,status:"今日掛牌",shares:900,deposit:20,desc:"Micro LED巨量轉移技術領先，Apple Vision Pro 2供應鏈候選",risk:"Micro LED商業化時程不確定"},
-{id:"6968",name:"安碁資訊",type:"上市",price:178,market_price:225,profit_est:"+26.4%",draw_date:"2026/03/05",listing_date:"2026/03/14",sector:"AI/雲端",score:84,status:"已掛牌",shares:700,deposit:20,desc:"AI資安監控平台，政府機關與金融業SOC服務市佔第一",risk:"政府標案集中度高"},
+// ── US STOCK DATA (fallback demo) ──
+function demoUS(){return[
+{id:"NVDA",name:"輝達",sector:"半導體",price:142.5,prev:139.8,change:2.7,changeP:"1.93",volume:312000000,marketCap:3500000000000,history:[135,137,138,139.8,142.5],tw_related:["2330","2382","6669","3661"]},
+{id:"AAPL",name:"蘋果",sector:"消費電子",price:235.2,prev:233.8,change:1.4,changeP:"0.60",volume:58000000,marketCap:3600000000000,history:[231,232,234,233.8,235.2],tw_related:["2317","3037","2454"]},
+{id:"MSFT",name:"微軟",sector:"軟體/雲端",price:448.5,prev:445.2,change:3.3,changeP:"0.74",volume:22000000,marketCap:3300000000000,history:[440,443,444,445.2,448.5],tw_related:["2382","6669","2345"]},
+{id:"GOOGL",name:"Google",sector:"網路/AI",price:178.3,prev:176.5,change:1.8,changeP:"1.02",volume:28000000,marketCap:2200000000000,history:[174,175,176,176.5,178.3],tw_related:["3661","2382"]},
+{id:"AMZN",name:"亞馬遜",sector:"電商/雲端",price:198.6,prev:196.2,change:2.4,changeP:"1.22",volume:45000000,marketCap:2000000000000,history:[193,195,196,196.2,198.6],tw_related:["3661","2382"]},
+{id:"META",name:"Meta",sector:"社群/AI",price:585.2,prev:578.5,change:6.7,changeP:"1.16",volume:18000000,marketCap:1500000000000,history:[570,575,577,578.5,585.2],tw_related:["6669","2382"]},
+{id:"TSM",name:"台積電ADR",sector:"半導體",price:198.5,prev:196.2,change:2.3,changeP:"1.17",volume:12000000,marketCap:1000000000000,history:[192,194,195,196.2,198.5],tw_related:["2330"]},
+{id:"TSLA",name:"特斯拉",sector:"電動車",price:268.3,prev:272.5,change:-4.2,changeP:"-1.54",volume:85000000,marketCap:850000000000,history:[275,273,271,272.5,268.3],tw_related:["2317","3037"]},
+{id:"AMD",name:"超微",sector:"半導體",price:128.5,prev:126.8,change:1.7,changeP:"1.34",volume:52000000,marketCap:208000000000,history:[124,125,126,126.8,128.5],tw_related:["2330","3037","3711"]},
+{id:"AVGO",name:"博通",sector:"半導體",price:218.5,prev:215.2,change:3.3,changeP:"1.53",volume:28000000,marketCap:1000000000000,history:[212,214,215,215.2,218.5],tw_related:["2330","3037"]},
+{id:"SMCI",name:"超微電腦",sector:"AI伺服器",price:42.8,prev:41.2,change:1.6,changeP:"3.88",volume:62000000,marketCap:25000000000,history:[38,39,40,41.2,42.8],tw_related:["2382","6669"]},
+{id:"ARM",name:"安謀",sector:"半導體IP",price:168.2,prev:165.5,change:2.7,changeP:"1.63",volume:15000000,marketCap:172000000000,history:[162,164,165,165.5,168.2],tw_related:["2454","3443"]},
+{id:"ASML",name:"艾司摩爾",sector:"半導體設備",price:738.5,prev:732.1,change:6.4,changeP:"0.87",volume:3200000,marketCap:290000000000,history:[725,728,730,732.1,738.5],tw_related:["2330"]},
+{id:"QCOM",name:"高通",sector:"半導體",price:178.2,prev:176.5,change:1.7,changeP:"0.96",volume:8500000,marketCap:198000000000,history:[174,175,176,176.5,178.2],tw_related:["2454"]},
+{id:"MU",name:"美光",sector:"記憶體",price:98.5,prev:100.2,change:-1.7,changeP:"-1.70",volume:25000000,marketCap:109000000000,history:[102,101,100,100.2,98.5],tw_related:["6770"]},
+{id:"INTC",name:"英特爾",sector:"半導體",price:22.8,prev:23.5,change:-0.7,changeP:"-2.98",volume:68000000,marketCap:98000000000,history:[24,23.8,23.5,23.5,22.8],tw_related:["2330","3711"]},
+{id:"PLTR",name:"Palantir",sector:"AI/大數據",price:108.5,prev:106.2,change:2.3,changeP:"2.17",volume:42000000,marketCap:250000000000,history:[103,105,106,106.2,108.5],tw_related:[]},
+{id:"NFLX",name:"Netflix",sector:"串流",price:1025,prev:1018,change:7,changeP:"0.69",volume:4500000,marketCap:440000000000,history:[1010,1015,1018,1018,1025],tw_related:[]},
+{id:"MRVL",name:"Marvell",sector:"半導體",price:92.3,prev:90.5,change:1.8,changeP:"1.99",volume:18000000,marketCap:80000000000,history:[88,89,90,90.5,92.3],tw_related:["2330","3037"]},
+{id:"COST",name:"好市多",sector:"零售",price:985,prev:982,change:3,changeP:"0.31",volume:2800000,marketCap:436000000000,history:[978,980,981,982,985],tw_related:[]},
 ]}
 
-function buildNews(){return[
-{time:"08:32",cat:"個股",title:"台積電CoWoS產能月產4萬片 法人上調2026年EPS至42元",source:"工商時報",tags:["2330","半導體"],impact:"positive",importance:5},
-{time:"08:15",cat:"總經",title:"Fed主席暗示6月降息1碼 市場預期全年降息3次",source:"經濟日報",tags:["利率","Fed"],impact:"positive",importance:5},
-{time:"08:02",cat:"AI",title:"NVIDIA Rubin架構發表 台系供應鏈受惠名單出爐",source:"鉅亨網",tags:["NVIDIA","AI"],impact:"positive",importance:5},
-{time:"07:58",cat:"個股",title:"廣達AI伺服器Q2出貨季增40% Azure大單挹注",source:"自由財經",tags:["2382","AI"],impact:"positive",importance:4},
-{time:"07:45",cat:"法人",title:"外資連3買台股 單日淨買超218億 聚焦半導體AI族群",source:"經濟日報",tags:["外資","買超"],impact:"positive",importance:4},
-{time:"07:30",cat:"個股",title:"鴻海墨西哥AI伺服器廠正式投產 GB200出貨進入高峰",source:"MoneyDJ",tags:["2317","AI"],impact:"positive",importance:4},
-{time:"07:22",cat:"IPO",title:"宏聯光電今日掛牌 承銷價145元 法人估蜜月行情上看250",source:"Yahoo財經",tags:["6972","IPO"],impact:"positive",importance:4},
-{time:"07:15",cat:"個股",title:"世芯-KY Q1營收破50億 Amazon/Google ASIC訂單持續放量",source:"工商時報",tags:["3661","ASIC"],impact:"positive",importance:4},
-{time:"07:05",cat:"匯率",title:"新台幣續升破30.8元 出口族群Q2匯損壓力增加",source:"中央社",tags:["匯率","出口"],impact:"negative",importance:3},
-{time:"06:55",cat:"產業",title:"DRAM現貨價Q1累跌12% 記憶體族群營運持續承壓",source:"TechNews",tags:["記憶體","DRAM"],impact:"negative",importance:3},
-{time:"06:30",cat:"國際",title:"美國3月CPI年增2.1% 低於預期 通膨確認趨緩",source:"Reuters",tags:["CPI","通膨"],impact:"positive",importance:5},
-{time:"06:10",cat:"國際",title:"費半指數漲1.35%創歷史新高 NVIDIA市值突破4兆美元",source:"Bloomberg",tags:["費半","NVIDIA"],impact:"positive",importance:5},
+// ── US INDICES (demo) ──
+function demoIdx(){return[
+{id:"sp500",name:"S&P 500",price:5985.32,change:26.85,changeP:"0.45"},
+{id:"nasdaq",name:"NASDAQ",price:19432.15,change:158.23,changeP:"0.82"},
+{id:"sox",name:"費城半導體",price:5342.68,change:71.12,changeP:"1.35"},
+{id:"dji",name:"道瓊工業",price:42856.72,change:125.65,changeP:"0.29"},
+{id:"vix",name:"VIX",price:14.2,change:-0.8,changeP:"-5.33"},
 ]}
 
-// ═══ UI COMPONENTS (pure createElement) ═══
-function Pill(props){return e("span",{style:{fontSize:10,padding:"2px 7px",borderRadius:4,background:(props.bg||props.color+"18"),color:props.color||C.blue,fontWeight:600,whiteSpace:"nowrap"}},props.children)}
+// ── CORRELATION ALERTS ──
+function buildAlerts(us,tw){var a=[];us.forEach(function(u){var cp=parseFloat(u.changeP);if(Math.abs(cp)<2||!u.tw_related||!u.tw_related.length)return;var names=u.tw_related.map(function(id){var t=tw.find(function(s){return s.id===id});return t?t.name+"("+id+")":id}).join("、");a.push({us:u.id,name:u.name,cp:u.changeP,dir:cp>0?"up":"down",tw:u.tw_related,msg:u.name+(cp>0?" 大漲":" 大跌")+Math.abs(cp).toFixed(1)+"%，留意台股："+names})});return a.sort(function(a,b){return Math.abs(parseFloat(b.cp))-Math.abs(parseFloat(a.cp))})}
 
-function Badge(props){
-var sc=props.score,sz=props.size||"sm";
-var color=sc>=80?C.up:sc>=60?C.warn:C.danger;
-var bg=sc>=80?C.accentDim:sc>=60?C.warnDim:C.dangerDim;
-var lb=getScoreLabel(sc).l;
-var d=sz==="lg"?{w:54,h:54,fs:19,ls:10}:sz==="md"?{w:42,h:42,fs:15,ls:9}:{w:36,h:36,fs:13,ls:8};
-return e("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:2}},
-  e("div",{style:{width:d.w,height:d.h,borderRadius:"50%",background:bg,border:"2px solid "+color,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:MONO,fontSize:d.fs,fontWeight:800,color:color}},sc),
-  e("span",{style:{fontSize:d.ls,color:color,fontWeight:700,whiteSpace:"nowrap"}},lb)
-)}
+// ── COMPONENTS ──
+function Pill(p){return e("span",{style:{fontSize:10,padding:"2px 7px",borderRadius:4,background:(p.color||C.blue)+"18",color:p.color||C.blue,fontWeight:600,whiteSpace:"nowrap"}},p.children)}
+function Badge(p){var sc=p.score,sz=p.size||"sm";var color=sc>=80?C.up:sc>=60?C.warn:C.danger;var bg=sc>=80?C.accentDim:sc>=60?C.warnDim:C.dangerDim;var d=sz==="lg"?{w:54,h:54,fs:19,ls:10}:sz==="md"?{w:42,h:42,fs:15,ls:9}:{w:36,h:36,fs:13,ls:8};return e("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:2}},e("div",{style:{width:d.w,height:d.h,borderRadius:"50%",background:bg,border:"2px solid "+color,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:M,fontSize:d.fs,fontWeight:800,color:color}},sc),e("span",{style:{fontSize:d.ls,color:color,fontWeight:700,whiteSpace:"nowrap"}},scoreLabel(sc)))}
+function Spark(p){var data=p.data,color=p.color,w=p.w||80,ht=p.h||28;if(!data||data.length<2)return null;var mn=Math.min.apply(null,data),mx=Math.max.apply(null,data),rng=mx-mn||1;var pts=data.map(function(v,i){return(i/(data.length-1))*w+","+(ht-((v-mn)/rng)*ht*0.8-ht*0.1)}).join(" ");return e("svg",{width:w,height:ht,style:{display:"block"}},e("polyline",{points:pts,fill:"none",stroke:color,strokeWidth:"1.5",strokeLinejoin:"round"}),e("circle",{cx:w,cy:ht-((data[data.length-1]-mn)/rng)*ht*0.8-ht*0.1,r:"2",fill:color}))}
+function fmtMcap(v){if(!v)return"-";if(v>=1e12)return"$"+(v/1e12).toFixed(2)+"T";if(v>=1e9)return"$"+(v/1e9).toFixed(0)+"B";return"$"+(v/1e6).toFixed(0)+"M"}
+function fmtVol(v){if(!v)return"-";if(v>=1e6)return(v/1e6).toFixed(1)+"M";if(v>=1e3)return(v/1e3).toFixed(0)+"K";return v+""}
 
-function Spark(props){
-var data=props.data,color=props.color,w=props.w||90,ht=props.h||32;
-if(!data||!data.length)return null;
-var mn=Math.min.apply(null,data),mx=Math.max.apply(null,data),rng=mx-mn||1;
-var pts=data.map(function(v,i){return(i/(data.length-1))*w+","+(ht-((v-mn)/rng)*ht*0.85-ht*0.05)}).join(" ");
-var ly=ht-((data[data.length-1]-mn)/rng)*ht*0.85-ht*0.05;
-var gid="sg"+color.replace("#","");
-return e("svg",{width:w,height:ht,style:{display:"block"}},
-  e("defs",null,e("linearGradient",{id:gid,x1:"0",y1:"0",x2:"0",y2:"1"},e("stop",{offset:"0%",stopColor:color,stopOpacity:"0.3"}),e("stop",{offset:"100%",stopColor:color,stopOpacity:"0"}))),
-  e("polyline",{points:"0,"+ht+" "+pts+" "+w+","+ht,fill:"url(#"+gid+")",stroke:"none"}),
-  e("polyline",{points:pts,fill:"none",stroke:color,strokeWidth:"1.5",strokeLinejoin:"round"}),
-  e("circle",{cx:w,cy:ly,r:"2.5",fill:color})
-)}
-
-// ═══ MAIN APP ═══
+// ══════════ MAIN APP ══════════
 function App(){
-var _tab=useState("overview"),tab=_tab[0],setTab=_tab[1];
-var _search=useState(""),search=_search[0],setSearch=_search[1];
-var _sortBy=useState("rating"),sortBy=_sortBy[0],setSortBy=_sortBy[1];
-var _sortDir=useState("desc"),sortDir=_sortDir[0],setSortDir=_sortDir[1];
-var _sectorF=useState("全部"),sectorF=_sectorF[0],setSectorF=_sectorF[1];
-var _stratF=useState("全部"),stratF=_stratF[0],setStratF=_stratF[1];
-var _sel=useState(null),sel=_sel[0],setSel=_sel[1];
+var _t=useState("overview"),tab=_t[0],setTab=_t[1];
 var _ts=useState(new Date()),ts=_ts[0],setTs=_ts[1];
-var _nf=useState("全部"),newsFilter=_nf[0],setNewsFilter=_nf[1];
+var _sel=useState(null),sel=_sel[0],setSel=_sel[1];
+var _usel=useState(null),usel=_usel[0],setUsel=_usel[1];
+var _search=useState(""),search=_search[0],setSearch=_search[1];
+var _usearch=useState(""),usearch=_usearch[0],setUsearch=_usearch[1];
 
-var allStocks=useMemo(buildStocks,[]);
-var ipos=useMemo(buildIPOs,[]);
-var news=useMemo(buildNews,[]);
-var sparksRef=useRef(null);
-if(!sparksRef.current){var sp={};allStocks.forEach(function(s){sp[s.id]=Array.from({length:24},function(_,i){return s.prev+(Math.random()-0.45)*s.prev*0.015*(i+1)})});sparksRef.current=sp}
-var sparks=sparksRef.current;
+var twStocks=useMemo(demoTW,[]);
+var usStocks=useMemo(demoUS,[]);
+var usIdx=useMemo(demoIdx,[]);
+var alerts=useMemo(function(){return buildAlerts(usStocks,twStocks)},[]);
+var sparks=useRef(null);
+if(!sparks.current){var sp={};twStocks.forEach(function(s){sp[s.id]=Array.from({length:20},function(_,i){return s.prev+(Math.random()-0.45)*s.prev*0.015*(i+1)})});sparks.current=sp}
 
-var market={taiex:{v:23856.72,ch:187.35,cp:0.79},otc:{v:248.63,ch:2.15,cp:0.87},futures:{v:23912,ch:195,cp:0.82},volume:"3,856億",foreign:"+218.5億",trust:"+32.8億",dealer:"-15.2億",usdtwd:"30.85",vix:14.2,sp500:"+0.45%",nasdaq:"+0.82%",sox:"+1.35%",nikkei:"+0.32%"};
+var market={taiex:{v:23856.72,ch:187.35,cp:0.79},otc:{v:248.63,ch:2.15,cp:0.87},volume:"3,856億",foreign:"+218.5億",trust:"+32.8億",dealer:"-15.2億"};
+var topTW=twStocks.slice().sort(function(a,b){return b.rating-a.rating}).slice(0,5);
+var topUS=usStocks.slice().sort(function(a,b){return Math.abs(parseFloat(b.changeP))-Math.abs(parseFloat(a.changeP))}).slice(0,5);
+var filteredTW=twStocks.filter(function(s){return!search||s.name.indexOf(search)>=0||s.id.indexOf(search)>=0});
+var filteredUS=usStocks.filter(function(s){return!usearch||s.name.indexOf(usearch)>=0||s.id.toUpperCase().indexOf(usearch.toUpperCase())>=0});
 
-var sectors=[];allStocks.forEach(function(s){if(sectors.indexOf(s.sector)===-1)sectors.push(s.sector)});
-var strategies=[];allStocks.forEach(function(s){if(strategies.indexOf(s.strategy)===-1)strategies.push(s.strategy)});
+var tabs=[{k:"overview",l:"市場總覽",em:"📊"},{k:"tw",l:"台股監測",em:"🇹🇼"},{k:"us",l:"美股監測",em:"🇺🇸"},{k:"link",l:"台美連動",em:"🔗"},{k:"advisor",l:"AI策略",em:"🤖"}];
 
-var filtered=allStocks.filter(function(s){
-  if(search&&s.name.indexOf(search)===-1&&s.id.indexOf(search)===-1)return false;
-  if(sectorF!=="全部"&&s.sector!==sectorF)return false;
-  if(stratF!=="全部"&&s.strategy!==stratF)return false;
-  return true;
-}).sort(function(a,b){
-  var d=sortDir==="desc"?-1:1;
-  var m={rating:"rating",change:"changeP",vol:"vol",pe:"pe",eps:"eps"};
-  var k=m[sortBy]||"rating";
-  return(parseFloat(a[k])-parseFloat(b[k]))*d;
-});
-
-var topPicks=allStocks.slice().sort(function(a,b){return b.rating-a.rating}).slice(0,5);
-var filteredNews=newsFilter==="全部"?news:news.filter(function(n){return n.cat===newsFilter||n.tags.some(function(t){return t.indexOf(newsFilter)>=0})});
-
-var tabs=[{k:"overview",l:"市場總覽",em:"📊"},{k:"stocks",l:"個股監測",em:"📈"},{k:"ipo",l:"IPO抽籤",em:"🎫"},{k:"news",l:"即時快訊",em:"📰"},{k:"advisor",l:"AI策略",em:"🤖"}];
-
-// ─── RENDER ───
-return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:FONT}},
-
+return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily:F}},
   // HEADER
   e("header",{style:{background:"linear-gradient(180deg,#0d1525,#060b14)",borderBottom:"1px solid "+C.border,padding:"14px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}},
     e("div",{style:{display:"flex",alignItems:"center",gap:10}},
-      e("div",{style:{width:40,height:40,borderRadius:10,background:"linear-gradient(135deg,"+C.accent+","+C.blue+")",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:900,color:"#000"}},"台"),
+      e("div",{style:{width:40,height:40,borderRadius:10,background:"linear-gradient(135deg,"+C.accent+","+C.blue+")",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,fontWeight:900,color:"#000"}},"台美"),
       e("div",null,
-        e("h1",{style:{margin:0,fontSize:18,fontWeight:800,letterSpacing:-0.5,background:"linear-gradient(90deg,"+C.accent+","+C.blue+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"台股日監測 Agent Pro"),
-        e("p",{style:{margin:0,fontSize:10,color:C.textMuted}},"Real-time TWSE · TPEx · AI-Powered Analysis")
-      )
+        e("h1",{style:{margin:0,fontSize:18,fontWeight:800,background:"linear-gradient(90deg,"+C.accent+","+C.blue+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}},"台美股日監測 Agent Pro"),
+        e("p",{style:{margin:0,fontSize:10,color:C.textMuted}},"TWSE · TPEx · NYSE · NASDAQ · AI Analysis"))
     ),
     e("div",{style:{display:"flex",alignItems:"center",gap:10}},
-      e("div",{style:{display:"flex",alignItems:"center",gap:4,padding:"5px 10px",background:C.surface,borderRadius:6,border:"1px solid "+C.border}},
-        e("div",{style:{width:7,height:7,borderRadius:"50%",background:C.accent,boxShadow:"0 0 6px "+C.accent}}),
-        e("span",{style:{fontSize:10,color:C.textDim}},"LIVE")
-      ),
-      e("span",{style:{fontSize:10,color:C.textMuted,fontFamily:MONO}},ts.toLocaleTimeString("zh-TW")),
-      e("button",{onClick:function(){setTs(new Date())},style:{background:C.accentDim,border:"1px solid "+C.accent+"33",borderRadius:7,padding:"5px 10px",color:C.accent,cursor:"pointer",fontSize:11,fontWeight:600}},"⟳ 刷新")
-    )
+      e("div",{style:{display:"flex",alignItems:"center",gap:4,padding:"5px 10px",background:C.surface,borderRadius:6,border:"1px solid "+C.border}},e("div",{style:{width:7,height:7,borderRadius:"50%",background:C.accent,boxShadow:"0 0 6px "+C.accent}}),e("span",{style:{fontSize:10,color:C.textDim}},"LIVE")),
+      e("span",{style:{fontSize:10,color:C.textMuted,fontFamily:M}},ts.toLocaleTimeString("zh-TW")),
+      e("button",{onClick:function(){setTs(new Date())},style:{background:C.accentDim,border:"1px solid "+C.accent+"33",borderRadius:7,padding:"5px 10px",color:C.accent,cursor:"pointer",fontSize:11,fontWeight:600}},"⟳ 刷新"))
   ),
-
   // NAV
-  e("nav",{style:{display:"flex",gap:0,padding:"0 20px",background:C.surface,borderBottom:"1px solid "+C.border,overflowX:"auto"}},
+  e("nav",{style:{display:"flex",padding:"0 20px",background:C.surface,borderBottom:"1px solid "+C.border,overflowX:"auto"}},
     tabs.map(function(t){return e("button",{key:t.k,onClick:function(){setTab(t.k)},style:{padding:"11px 16px",border:"none",cursor:"pointer",background:"transparent",color:tab===t.k?C.accent:C.textMuted,borderBottom:tab===t.k?"2px solid "+C.accent:"2px solid transparent",fontSize:12,fontWeight:600,whiteSpace:"nowrap"}},t.em+" "+t.l)})
   ),
-
   // MAIN
   e("main",{style:{padding:"16px 20px",maxWidth:1440,margin:"0 auto"}},
 
-    // ── OVERVIEW ──
+    // ══ OVERVIEW ══
     tab==="overview"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
+      // TW indices
       e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(170px,1fr))",gap:10}},
-        [{l:"加權指數",v:market.taiex.v,ch:market.taiex.ch,cp:market.taiex.cp},{l:"櫃買指數",v:market.otc.v,ch:market.otc.ch,cp:market.otc.cp},{l:"台指期",v:market.futures.v,ch:market.futures.ch,cp:market.futures.cp}].map(function(idx,i){
-          return e("div",{key:i,style:Object.assign({},cardS,{padding:14})},
+        [{l:"🇹🇼 加權指數",v:market.taiex.v,ch:market.taiex.ch,cp:market.taiex.cp},{l:"🇹🇼 櫃買指數",v:market.otc.v,ch:market.otc.ch,cp:market.otc.cp}].concat(usIdx.slice(0,3).map(function(idx){return{l:"🇺🇸 "+idx.name,v:idx.price,ch:idx.change,cp:parseFloat(idx.changeP)}})).map(function(idx,i){
+          return e("div",{key:i,style:Object.assign({},cS,{padding:14})},
             e("div",{style:{fontSize:10,color:C.textMuted,marginBottom:4}},idx.l),
-            e("div",{style:{fontSize:22,fontWeight:800,fontFamily:MONO}},idx.v.toLocaleString()),
-            e("div",{style:{fontSize:12,fontWeight:700,color:idx.ch>=0?C.up:C.down,fontFamily:MONO,marginTop:2}},(idx.ch>=0?"▲":"▼")+" "+Math.abs(idx.ch).toFixed(2)+" ("+(idx.ch>=0?"+":"")+idx.cp.toFixed(2)+"%)")
+            e("div",{style:{fontSize:20,fontWeight:800,fontFamily:M}},idx.v.toLocaleString()),
+            e("div",{style:{fontSize:12,fontWeight:700,color:idx.ch>=0?C.up:C.down,fontFamily:M}},(idx.ch>=0?"▲ +":"▼ ")+Math.abs(idx.ch).toFixed(2)+" ("+idx.cp.toFixed(2)+"%)")
           )
-        }),
-        e("div",{style:Object.assign({},cardS,{padding:14})},e("div",{style:{fontSize:10,color:C.textMuted,marginBottom:4}},"今日成交量"),e("div",{style:{fontSize:22,fontWeight:800}},market.volume),e("div",{style:{fontSize:11,color:C.accent,marginTop:2}},"↑ 12.3% vs 昨日"))
+        })
       ),
-      // Institutional
+      // Institutional + alerts
       e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:10}},
-        e("div",{style:cardS},e("div",{style:hdrS},"💰 三大法人買賣超"),
+        e("div",{style:cS},e("div",{style:hS},"💰 三大法人買賣超"),
           e("div",{style:{padding:14,display:"flex",gap:10}},
-            [{l:"外資",v:market.foreign,c:C.up},{l:"投信",v:market.trust,c:C.up},{l:"自營商",v:market.dealer,c:C.down}].map(function(f,i){return e("div",{key:i,style:{flex:1,background:f.c+"0a",borderRadius:8,padding:10,borderLeft:"3px solid "+f.c}},e("div",{style:{fontSize:10,color:C.textMuted}},f.l),e("div",{style:{fontSize:17,fontWeight:800,color:f.c,fontFamily:MONO}},f.v))})
+            [{l:"外資",v:market.foreign,c:C.up},{l:"投信",v:market.trust,c:C.up},{l:"自營商",v:market.dealer,c:C.down}].map(function(f,i){return e("div",{key:i,style:{flex:1,background:f.c+"0a",borderRadius:8,padding:10,borderLeft:"3px solid "+f.c}},e("div",{style:{fontSize:10,color:C.textMuted}},f.l),e("div",{style:{fontSize:17,fontWeight:800,color:f.c,fontFamily:M}},f.v))})
           )
         ),
-        e("div",{style:cardS},e("div",{style:hdrS},"🌐 國際連動"),
+        e("div",{style:cS},e("div",{style:hS},"🔗 台美連動警報"),
           e("div",{style:{padding:"8px 14px"}},
-            [{l:"S&P 500",v:market.sp500},{l:"NASDAQ",v:market.nasdaq},{l:"費半指數",v:market.sox},{l:"日經225",v:market.nikkei},{l:"VIX",v:""+market.vix},{l:"USD/TWD",v:market.usdtwd}].map(function(r,i){return e("div",{key:i,style:{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:i<5?"1px solid "+C.border:"none"}},e("span",{style:{fontSize:12,color:C.textDim}},r.l),e("span",{style:{fontSize:12,fontWeight:700,fontFamily:MONO,color:r.v.indexOf("+")>=0?C.up:r.v.indexOf("-")>=0?C.down:C.text}},r.v))})
-          )
-        )
-      ),
-      // Top Picks
-      e("div",{style:cardS},e("div",{style:hdrS},"🏆 AI 精選 TOP 5"),
-        e("div",{style:{padding:14,display:"grid",gap:8}},
-          topPicks.map(function(s,i){return e("div",{key:s.id,onClick:function(){setSel(s);setTab("stocks")},style:{display:"flex",alignItems:"center",gap:12,padding:"10px 12px",borderRadius:10,background:i===0?C.accentDim:C.surface,cursor:"pointer",border:"1px solid "+(i===0?C.accent+"33":C.border)},onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},onMouseLeave:function(ev){ev.currentTarget.style.background=i===0?C.accentDim:C.surface}},
-            e("span",{style:{width:24,height:24,borderRadius:"50%",background:i===0?C.gold:i===1?"#c0c0c0":i===2?"#cd7f32":C.border,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:900,color:i<3?"#000":C.textDim,flexShrink:0}},i+1),
-            e("div",{style:{flex:1,minWidth:0}},
-              e("div",{style:{display:"flex",alignItems:"center",gap:6}},e("span",{style:{fontSize:14,fontWeight:800}},s.name),e("span",{style:{fontSize:11,color:C.textMuted,fontFamily:MONO}},s.id),e(Pill,{color:C.purple},s.sector)),
-              e("div",{style:{fontSize:11,color:C.textDim,marginTop:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},s.news)
-            ),
-            e("div",{style:{textAlign:"right",flexShrink:0}},e("div",{style:{fontSize:16,fontWeight:800,fontFamily:MONO}},"$"+s.price),e("div",{style:{fontSize:12,fontWeight:700,color:s.change>=0?C.up:C.down,fontFamily:MONO}},(s.change>=0?"+":"")+s.changeP+"%")),
-            e(Badge,{score:s.rating,size:"md"})
-          )})
-        )
-      )
-    ),
-
-    // ── STOCKS ──
-    tab==="stocks"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
-      e("div",{style:{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}},
-        e("div",{style:{display:"flex",alignItems:"center",gap:6,background:C.card,borderRadius:8,padding:"7px 10px",border:"1px solid "+C.border,flex:"1 1 200px",maxWidth:260}},
-          e("span",{style:{color:C.textMuted}},"🔍"),
-          e("input",{value:search,onChange:function(ev){setSearch(ev.target.value)},placeholder:"搜尋代號/名稱...",style:{border:"none",background:"transparent",color:C.text,outline:"none",fontSize:12,width:"100%"}})
-        ),
-        e("select",{value:sectorF,onChange:function(ev){setSectorF(ev.target.value)},style:{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"7px 10px",color:C.text,fontSize:11,cursor:"pointer"}},e("option",{value:"全部"},"全部產業"),sectors.map(function(s){return e("option",{key:s,value:s},s)})),
-        e("select",{value:stratF,onChange:function(ev){setStratF(ev.target.value)},style:{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"7px 10px",color:C.text,fontSize:11,cursor:"pointer"}},e("option",{value:"全部"},"全部策略"),strategies.map(function(s){return e("option",{key:s,value:s},s)})),
-        e("select",{value:sortBy,onChange:function(ev){setSortBy(ev.target.value)},style:{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"7px 10px",color:C.text,fontSize:11,cursor:"pointer"}},["rating","change","vol","pe","eps"].map(function(v){var labels={rating:"評分",change:"漲跌%",vol:"量",pe:"PE",eps:"EPS"};return e("option",{key:v,value:v},labels[v])})),
-        e("button",{onClick:function(){setSortDir(sortDir==="desc"?"asc":"desc")},style:{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"7px 10px",color:C.text,fontSize:11,cursor:"pointer"}},sortDir==="desc"?"↓降":"↑升")
-      ),
-      // Detail
-      sel&&e("div",{style:Object.assign({},cardS,{padding:0,border:"1px solid "+C.accent+"33",boxShadow:"0 0 40px "+C.accent+"08"})},
-        e("div",{style:{padding:"18px 20px",display:"flex",justifyContent:"space-between",alignItems:"start",borderBottom:"1px solid "+C.border,flexWrap:"wrap",gap:12}},
-          e("div",null,e("h2",{style:{margin:0,fontSize:22,fontWeight:800}},sel.name,e("span",{style:{fontSize:13,color:C.textMuted,marginLeft:8,fontFamily:MONO}},sel.id+".TW")),e("div",{style:{display:"flex",gap:6,marginTop:6}},e(Pill,{color:C.purple},sel.sector),e(Pill,{color:C.accent},sel.strategy))),
-          e("div",{style:{display:"flex",alignItems:"center",gap:14}},e(Badge,{score:sel.rating,size:"lg"}),e("button",{onClick:function(){setSel(null)},style:{background:"transparent",border:"1px solid "+C.border,borderRadius:7,padding:"5px 10px",color:C.textDim,cursor:"pointer",fontSize:11}},"✕"))
-        ),
-        e("div",{style:{padding:"16px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:10}},
-          [{l:"現價",v:"$"+sel.price,c:sel.change>=0?C.up:C.down},{l:"漲跌幅",v:(sel.change>=0?"+":"")+Number(sel.changeP).toFixed(2)+"%",c:sel.change>=0?C.up:C.down},{l:"本益比",v:sel.pe>0?sel.pe.toFixed(1):"虧損",c:sel.pe>0?C.text:C.danger},{l:"EPS",v:sel.eps.toFixed(2),c:sel.eps>0?C.up:C.down},{l:"ROE",v:sel.roe.toFixed(1)+"%",c:sel.roe>15?C.up:C.text},{l:"營收YoY",v:(sel.revenue_yoy>0?"+":"")+sel.revenue_yoy+"%",c:sel.revenue_yoy>0?C.up:C.down},{l:"殖利率",v:sel.dividend_yield+"%",c:sel.dividend_yield>4?C.gold:C.text},{l:"毛利率",v:sel.fin.gm+"%",c:sel.fin.gm>20?C.up:C.text}].map(function(m,i){return e("div",{key:i,style:{background:C.surface,borderRadius:8,padding:10}},e("div",{style:{fontSize:10,color:C.textMuted,marginBottom:3}},m.l),e("div",{style:{fontSize:16,fontWeight:800,color:m.c,fontFamily:MONO}},m.v))})
-        ),
-        e("div",{style:{padding:"0 20px 16px",display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}},
-          e("div",{style:{background:C.accentDim,borderRadius:8,padding:10,textAlign:"center"}},e("div",{style:{fontSize:10,color:C.accent}},"短線目標"),e("div",{style:{fontSize:18,fontWeight:800,color:C.accent,fontFamily:MONO}},"$"+sel.short_target)),
-          e("div",{style:{background:C.blue+"15",borderRadius:8,padding:10,textAlign:"center"}},e("div",{style:{fontSize:10,color:C.blue}},"長線目標"),e("div",{style:{fontSize:18,fontWeight:800,color:C.blue,fontFamily:MONO}},"$"+sel.long_target)),
-          e("div",{style:{background:C.dangerDim,borderRadius:8,padding:10,textAlign:"center"}},e("div",{style:{fontSize:10,color:C.danger}},"停損價位"),e("div",{style:{fontSize:18,fontWeight:800,color:C.danger,fontFamily:MONO}},"$"+sel.stop_loss))
-        ),
-        e("div",{style:{padding:"0 20px 16px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}},
-          e("div",{style:{background:C.surface,borderRadius:8,padding:12}},e("div",{style:{fontSize:11,fontWeight:700,color:C.warn,marginBottom:6}},"📰 最新動態"),e("div",{style:{fontSize:12,color:C.textDim,lineHeight:1.7}},sel.news)),
-          e("div",{style:{background:C.surface,borderRadius:8,padding:12}},e("div",{style:{fontSize:11,fontWeight:700,color:C.purple,marginBottom:6}},"🤝 國內外合作"),e("div",{style:{fontSize:12,color:C.textDim,lineHeight:1.7}},sel.cooperation))
-        )
-      ),
-      // Table
-      e("div",{style:{overflowX:"auto"}},
-        e("table",{style:{width:"100%",borderCollapse:"separate",borderSpacing:"0 5px"}},
-          e("thead",null,e("tr",null,["評分","代號","名稱","產業","現價","漲跌%","量","P/E","走勢","法人","策略"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left",whiteSpace:"nowrap"}},h)}))),
-          e("tbody",null,filtered.map(function(s){
-            var net=s.foreign_buy+s.trust_buy+s.dealer_buy;
-            var isA=sel&&sel.id===s.id;
-            return e("tr",{key:s.id,onClick:function(){setSel(s)},style:{cursor:"pointer"},onMouseEnter:function(ev){if(!isA)ev.currentTarget.style.background=C.cardHover},onMouseLeave:function(ev){if(!isA)ev.currentTarget.style.background=C.card}},
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,borderRadius:"8px 0 0 8px",whiteSpace:"nowrap"}},e(Badge,{score:s.rating})),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,fontFamily:MONO,fontSize:12,fontWeight:700}},s.id),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,fontWeight:700,fontSize:12}},s.name),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card}},e(Pill,{color:C.purple},s.sector)),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,fontFamily:MONO,fontWeight:800,fontSize:13}},"$"+s.price),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,color:s.change>=0?C.up:C.down,fontFamily:MONO,fontWeight:700,fontSize:12}},(s.change>=0?"▲ +":"▼ ")+s.changeP+"%"),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,fontSize:11,color:C.textDim}},s.vol_str),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,fontSize:11,fontFamily:MONO,color:s.pe<0?C.danger:C.text}},s.pe>0?s.pe.toFixed(1):"N/A"),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card}},e(Spark,{data:sparks[s.id],color:s.change>=0?C.up:C.down})),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,fontSize:11,fontFamily:MONO,fontWeight:600,color:net>0?C.up:net<0?C.down:C.flat}},(net>0?"+":"")+(net/1000).toFixed(1)+"K"),
-              e("td",{style:{padding:8,background:isA?C.cardHover:C.card,borderRadius:"0 8px 8px 0"}},e(Pill,{color:s.strategy==="長線價值"?C.accent:s.strategy==="存股標的"?C.blue:s.strategy==="短線動能"?C.orange:C.warn},s.strategy))
-            )
-          }))
-        )
-      )
-    ),
-
-    // ── IPO ──
-    tab==="ipo"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
-      e("div",{style:Object.assign({},cardS,{padding:16,background:"linear-gradient(135deg,"+C.accentDim+","+C.surface+")",border:"1px solid "+C.accent+"33"})},
-        e("h3",{style:{margin:"0 0 6px",fontSize:15,fontWeight:700}},"🎫 公開申購 / 新股抽籤追蹤中心"),
-        e("p",{style:{margin:0,fontSize:12,color:C.textDim}},"自動追蹤最新上市櫃申購資訊，AI評分推薦，含承銷價差、預估獲利、風險評估")
-      ),
-      ipos.slice().sort(function(a,b){return b.score-a.score}).map(function(ipo){
-        return e("div",{key:ipo.id,style:Object.assign({},cardS,{padding:18})},
-          e("div",{style:{display:"grid",gridTemplateColumns:"70px 1fr auto",gap:16,alignItems:"start"}},
-            e("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:6}},e(Badge,{score:ipo.score,size:"md"}),e(Pill,{color:ipo.status==="申購中"?C.accent:ipo.status==="即將申購"?C.warn:ipo.status==="今日掛牌"?C.purple:C.textMuted},ipo.status)),
-            e("div",null,
-              e("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:6,flexWrap:"wrap"}},e("span",{style:{fontSize:16,fontWeight:800}},ipo.name),e("span",{style:{fontSize:12,color:C.textMuted,fontFamily:MONO}},ipo.id),e(Pill,{color:C.blue},ipo.type),e(Pill,{color:C.purple},ipo.sector)),
-              e("p",{style:{margin:"0 0 8px",fontSize:12,color:C.textDim,lineHeight:1.6}},ipo.desc),
-              e("div",{style:{display:"flex",gap:12,flexWrap:"wrap",fontSize:11,color:C.textMuted}},
-                e("span",null,"承銷價 ",e("strong",{style:{color:C.text}},"$"+ipo.price)),
-                e("span",null,"市價 ",e("strong",{style:{color:C.text}},"$"+ipo.market_price)),
-                e("span",null,"獲利 ",e("strong",{style:{color:C.up}},ipo.profit_est)),
-                e("span",null,"抽籤 ",e("strong",{style:{color:C.text}},ipo.draw_date)),
-                e("span",null,"掛牌 ",e("strong",{style:{color:C.text}},ipo.listing_date))
-              ),
-              e("div",{style:{marginTop:8,padding:"6px 10px",background:C.warnDim,borderRadius:6,fontSize:11,color:C.warn}},"⚠️ "+ipo.risk)
-            ),
-            e("div",{style:{textAlign:"right",minWidth:80}},e("div",{style:{fontSize:28,fontWeight:900,color:C.up,fontFamily:MONO}},ipo.profit_est),e("div",{style:{fontSize:10,color:C.textMuted}},"預估報酬"))
-          )
-        )
-      })
-    ),
-
-    // ── NEWS ──
-    tab==="news"&&e("div",{style:{display:"flex",flexDirection:"column",gap:10}},
-      e("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
-        ["全部","個股","AI","總經","法人","產業","IPO","國際","匯率"].map(function(c){return e("button",{key:c,onClick:function(){setNewsFilter(c)},style:{padding:"5px 12px",borderRadius:16,background:newsFilter===c?C.accent:C.card,color:newsFilter===c?"#000":C.textDim,border:"1px solid "+(newsFilter===c?C.accent:C.border),fontSize:11,fontWeight:600,cursor:"pointer"}},c)})
-      ),
-      filteredNews.map(function(n,i){
-        return e("div",{key:i,style:Object.assign({},cardS,{padding:"12px 14px",display:"flex",gap:10,alignItems:"center",borderLeft:"3px solid "+(n.impact==="positive"?C.up:n.impact==="negative"?C.down:C.flat)})},
-          e("div",{style:{minWidth:50,textAlign:"center"}},e("div",{style:{fontSize:12,fontFamily:MONO,color:C.textMuted}},n.time),e(Pill,{color:n.cat==="個股"?C.accent:n.cat==="AI"?C.purple:n.cat==="總經"?C.blue:n.cat==="國際"?C.orange:C.textMuted},n.cat)),
-          e("div",{style:{flex:1}},e("div",{style:{fontSize:13,fontWeight:600,marginBottom:4}},n.title),e("div",{style:{display:"flex",gap:4,alignItems:"center"}},e("span",{style:{fontSize:10,color:C.textMuted}},n.source),n.tags.map(function(t){return e("span",{key:t,style:{fontSize:9,padding:"1px 5px",borderRadius:3,background:C.blue+"15",color:C.blue}},"#"+t)}))),
-          e("div",{style:{display:"flex",gap:2,flexShrink:0}},Array.from({length:5}).map(function(_,j){return e("div",{key:j,style:{width:5,height:5,borderRadius:"50%",background:j<n.importance?C.gold:C.border}})}))
-        )
-      })
-    ),
-
-    // ── AI ADVISOR ──
-    tab==="advisor"&&e("div",{style:{display:"flex",flexDirection:"column",gap:16}},
-      e("div",{style:Object.assign({},cardS,{padding:20,background:"linear-gradient(135deg,"+C.card+","+C.surface+")"})},
-        e("h2",{style:{margin:"0 0 14px",fontSize:17,fontWeight:800}},"🤖 AI 投資策略日報 — "+new Date().toLocaleDateString("zh-TW",{year:"numeric",month:"long",day:"numeric"})),
-        e("div",{style:{background:C.surface,borderRadius:10,padding:16,fontSize:13,lineHeight:1.9,color:C.textDim}},
-          e("p",{style:{margin:"0 0 10px"}},e("strong",{style:{color:C.accent}},"【大盤研判・偏多】"),"加權指數站穩所有短中期均線，量能擴增至3,856億顯示買氣回籠。外資連3日買超累計逾600億，聚焦半導體與AI族群。費半指數隔夜大漲1.35%創歷史新高。"),
-          e("p",{style:{margin:"0 0 10px"}},e("strong",{style:{color:C.warn}},"【關鍵變數】"),"①Fed 6月降息機率升至72%，資金面利多。②新台幣升值至30.85，出口族群匯損需留意。③DRAM現貨價持續走跌，記憶體族群承壓。"),
-          e("p",{style:{margin:0}},e("strong",{style:{color:C.blue}},"【操作策略】"),"長線加碼AI伺服器鏈（廣達、緯穎、世芯），台積電逢千元以下布局。短線留意今日掛牌宏聯光電蜜月行情。金融股兆豐金殖利率5.5%適合存股。")
-        )
-      ),
-      // Strategy groups
-      [{t:"📈 長線價值（6-12月）",c:C.accent,f:function(s){return s.strategy==="長線價值"&&s.rating>=80}},{t:"⚡ 短線波段（1-4週）",c:C.warn,f:function(s){return(s.strategy==="波段操作"||s.strategy==="短線動能")&&s.rating>=60}},{t:"💰 存股標的（長期持有）",c:C.blue,f:function(s){return s.strategy==="存股標的"}}].map(function(cat,ci){
-        var list=allStocks.filter(cat.f).sort(function(a,b){return b.rating-a.rating});
-        return e("div",{key:ci},
-          e("h3",{style:{margin:"0 0 10px",fontSize:14,fontWeight:700,color:cat.c}},cat.t),
-          e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(310px,1fr))",gap:10}},
-            list.map(function(s){return e("div",{key:s.id,onClick:function(){setSel(s);setTab("stocks")},style:Object.assign({},cardS,{padding:14,cursor:"pointer",border:"1px solid "+cat.c+"22"})},
-              e("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"start",marginBottom:8}},
-                e("div",null,e("div",{style:{fontSize:14,fontWeight:800}},s.name," ",e("span",{style:{fontSize:11,color:C.textMuted,fontFamily:MONO}},s.id)),e("div",{style:{marginTop:3}},e(Pill,{color:C.purple},s.sector))),
-                e(Badge,{score:s.rating})
-              ),
-              e("div",{style:{fontSize:11,color:C.textDim,marginBottom:8,lineHeight:1.6}},s.news),
-              e("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
-                s.long_target&&e(Pill,{color:cat.c},"目標 $"+s.long_target+" (+"+((s.long_target-s.price)/s.price*100).toFixed(1)+"%)"),
-                e(Pill,{color:C.danger},"停損 $"+s.stop_loss),
-                s.dividend_yield>4&&e(Pill,{color:C.gold},"殖利率 "+s.dividend_yield+"%")
-              )
+            alerts.length===0?e("div",{style:{fontSize:12,color:C.textMuted,padding:8}},"今日無重大連動警報"):
+            alerts.slice(0,4).map(function(a,i){return e("div",{key:i,style:{padding:"6px 0",borderBottom:i<3?"1px solid "+C.border:"none",fontSize:12,color:C.textDim,display:"flex",alignItems:"center",gap:6}},
+              e("span",{style:{fontSize:16}},parseFloat(a.cp)>0?"🔴":"🟢"),
+              e("span",null,a.msg)
             )})
           )
         )
-      }),
+      ),
+      // Top picks TW + US
+      e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(340px,1fr))",gap:10}},
+        e("div",{style:cS},e("div",{style:hS},"🇹🇼 台股 AI 精選 TOP 5"),
+          e("div",{style:{padding:12}},topTW.map(function(s,i){return e("div",{key:s.id,onClick:function(){setSel(s);setTab("tw")},style:{display:"flex",alignItems:"center",gap:10,padding:"8px",borderRadius:8,cursor:"pointer",borderBottom:i<4?"1px solid "+C.border:"none"},onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},onMouseLeave:function(ev){ev.currentTarget.style.background="transparent"}},
+            e("span",{style:{width:22,height:22,borderRadius:"50%",background:i===0?C.gold:i===1?"#c0c0c0":i===2?"#cd7f32":C.border,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:900,color:i<3?"#000":C.textDim}},i+1),
+            e("div",{style:{flex:1}},e("span",{style:{fontSize:13,fontWeight:700}},s.name),e("span",{style:{fontSize:10,color:C.textMuted,marginLeft:4}},s.id)),
+            e("div",{style:{textAlign:"right"}},e("div",{style:{fontSize:13,fontWeight:700,fontFamily:M}},"$"+s.price),e("div",{style:{fontSize:11,fontFamily:M,color:s.change>=0?C.up:C.down}},(s.change>=0?"+":"")+s.changeP+"%")),
+            e(Badge,{score:s.rating})
+          )}))
+        ),
+        e("div",{style:cS},e("div",{style:hS},"🇺🇸 美股今日漲跌幅 TOP 5"),
+          e("div",{style:{padding:12}},topUS.map(function(s,i){var cp=parseFloat(s.changeP);return e("div",{key:s.id,onClick:function(){setUsel(s);setTab("us")},style:{display:"flex",alignItems:"center",gap:10,padding:"8px",borderRadius:8,cursor:"pointer",borderBottom:i<4?"1px solid "+C.border:"none"},onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},onMouseLeave:function(ev){ev.currentTarget.style.background="transparent"}},
+            e("span",{style:{width:22,height:22,borderRadius:"50%",background:i===0?C.gold:i===1?"#c0c0c0":i===2?"#cd7f32":C.border,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:900,color:i<3?"#000":C.textDim}},i+1),
+            e("div",{style:{flex:1}},e("span",{style:{fontSize:13,fontWeight:700}},s.name),e("span",{style:{fontSize:10,color:C.textMuted,marginLeft:4}},s.id)),
+            e("div",{style:{textAlign:"right"}},e("div",{style:{fontSize:13,fontWeight:700,fontFamily:M}},"$"+s.price),e("div",{style:{fontSize:11,fontFamily:M,color:cp>=0?C.up:C.down}},(cp>=0?"+":"")+s.changeP+"%")),
+            s.history&&e(Spark,{data:s.history,color:cp>=0?C.up:C.down})
+          )}))
+        )
+      )
+    ),
+
+    // ══ TW STOCKS ══
+    tab==="tw"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
+      e("div",{style:{display:"flex",alignItems:"center",gap:8}},
+        e("div",{style:{display:"flex",alignItems:"center",gap:6,background:C.card,borderRadius:8,padding:"7px 10px",border:"1px solid "+C.border,flex:"1 1 200px",maxWidth:280}},e("span",{style:{color:C.textMuted}},"🔍"),e("input",{value:search,onChange:function(ev){setSearch(ev.target.value)},placeholder:"搜尋台股...",style:{border:"none",background:"transparent",color:C.text,outline:"none",fontSize:12,width:"100%"}}))
+      ),
+      sel&&e("div",{style:Object.assign({},cS,{padding:0,border:"1px solid "+C.accent+"33"})},
+        e("div",{style:{padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"start",borderBottom:"1px solid "+C.border,flexWrap:"wrap",gap:12}},
+          e("div",null,e("h2",{style:{margin:0,fontSize:20,fontWeight:800}},sel.name,e("span",{style:{fontSize:12,color:C.textMuted,marginLeft:8,fontFamily:M}},sel.id)),e("div",{style:{display:"flex",gap:6,marginTop:4}},e(Pill,{color:C.purple},sel.sector),e(Pill,{color:C.accent},sel.strategy))),
+          e("div",{style:{display:"flex",alignItems:"center",gap:12}},e(Badge,{score:sel.rating,size:"lg"}),e("button",{onClick:function(){setSel(null)},style:{background:"transparent",border:"1px solid "+C.border,borderRadius:7,padding:"5px 10px",color:C.textDim,cursor:"pointer",fontSize:11}},"✕"))
+        ),
+        e("div",{style:{padding:"12px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8}},
+          [{l:"現價",v:"$"+sel.price,c:sel.change>=0?C.up:C.down},{l:"漲跌",v:(sel.change>=0?"+":"")+Number(sel.changeP).toFixed(2)+"%",c:sel.change>=0?C.up:C.down},{l:"P/E",v:sel.pe>0?sel.pe.toFixed(1):"N/A",c:C.text},{l:"EPS",v:sel.eps.toFixed(2),c:sel.eps>0?C.up:C.down},{l:"殖利率",v:sel.dividend_yield+"%",c:sel.dividend_yield>4?C.gold:C.text},{l:"ROE",v:sel.roe.toFixed(1)+"%",c:sel.roe>15?C.up:C.text}].map(function(m,i){return e("div",{key:i,style:{background:C.surface,borderRadius:8,padding:8}},e("div",{style:{fontSize:9,color:C.textMuted}},m.l),e("div",{style:{fontSize:15,fontWeight:800,color:m.c,fontFamily:M}},m.v))})
+        ),
+        e("div",{style:{padding:"0 20px 12px",display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}},
+          e("div",{style:{background:C.accentDim,borderRadius:8,padding:8,textAlign:"center"}},e("div",{style:{fontSize:9,color:C.accent}},"短線目標"),e("div",{style:{fontSize:16,fontWeight:800,color:C.accent,fontFamily:M}},"$"+sel.short_target)),
+          e("div",{style:{background:C.blue+"15",borderRadius:8,padding:8,textAlign:"center"}},e("div",{style:{fontSize:9,color:C.blue}},"長線目標"),e("div",{style:{fontSize:16,fontWeight:800,color:C.blue,fontFamily:M}},"$"+sel.long_target)),
+          e("div",{style:{background:C.dangerDim,borderRadius:8,padding:8,textAlign:"center"}},e("div",{style:{fontSize:9,color:C.danger}},"停損"),e("div",{style:{fontSize:16,fontWeight:800,color:C.danger,fontFamily:M}},"$"+sel.stop_loss))
+        ),
+        e("div",{style:{padding:"0 20px 16px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}},
+          e("div",{style:{background:C.surface,borderRadius:8,padding:10}},e("div",{style:{fontSize:10,fontWeight:700,color:C.warn,marginBottom:4}},"📰 動態"),e("div",{style:{fontSize:11,color:C.textDim,lineHeight:1.6}},sel.news)),
+          e("div",{style:{background:C.surface,borderRadius:8,padding:10}},e("div",{style:{fontSize:10,fontWeight:700,color:C.purple,marginBottom:4}},"🤝 合作"),e("div",{style:{fontSize:11,color:C.textDim,lineHeight:1.6}},sel.cooperation))
+        )
+      ),
+      e("div",{style:{overflowX:"auto"}},e("table",{style:{width:"100%",borderCollapse:"separate",borderSpacing:"0 5px"}},
+        e("thead",null,e("tr",null,["評分","代號","名稱","產業","現價","漲跌%","量","P/E","走勢","法人","策略"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
+        e("tbody",null,filteredTW.map(function(s){var net=s.foreign_buy+s.trust_buy+s.dealer_buy;return e("tr",{key:s.id,onClick:function(){setSel(s)},style:{cursor:"pointer"},onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},onMouseLeave:function(ev){ev.currentTarget.style.background=C.card}},
+          e("td",{style:{padding:8,background:C.card,borderRadius:"8px 0 0 8px"}},e(Badge,{score:s.rating})),
+          e("td",{style:{padding:8,background:C.card,fontFamily:M,fontSize:12,fontWeight:700}},s.id),
+          e("td",{style:{padding:8,background:C.card,fontWeight:700,fontSize:12}},s.name),
+          e("td",{style:{padding:8,background:C.card}},e(Pill,{color:C.purple},s.sector)),
+          e("td",{style:{padding:8,background:C.card,fontFamily:M,fontWeight:800}},"$"+s.price),
+          e("td",{style:{padding:8,background:C.card,color:s.change>=0?C.up:C.down,fontFamily:M,fontWeight:700,fontSize:12}},(s.change>=0?"▲+":"▼")+s.changeP+"%"),
+          e("td",{style:{padding:8,background:C.card,fontSize:11,color:C.textDim}},s.vol_str),
+          e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M}},s.pe>0?s.pe.toFixed(1):"N/A"),
+          e("td",{style:{padding:8,background:C.card}},e(Spark,{data:sparks.current[s.id],color:s.change>=0?C.up:C.down})),
+          e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M,fontWeight:600,color:net>0?C.up:net<0?C.down:C.flat}},(net>0?"+":"")+(net/1000).toFixed(1)+"K"),
+          e("td",{style:{padding:8,background:C.card,borderRadius:"0 8px 8px 0"}},e(Pill,{color:s.strategy==="長線價值"?C.accent:s.strategy==="存股標的"?C.blue:C.warn},s.strategy))
+        )}))
+      ))
+    ),
+
+    // ══ US STOCKS ══
+    tab==="us"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
+      // US Indices bar
+      e("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:8}},
+        usIdx.map(function(idx,i){var cp=parseFloat(idx.changeP);return e("div",{key:i,style:Object.assign({},cS,{padding:12})},
+          e("div",{style:{fontSize:10,color:C.textMuted,marginBottom:3}},idx.name),
+          e("div",{style:{fontSize:18,fontWeight:800,fontFamily:M}},idx.price.toLocaleString()),
+          e("div",{style:{fontSize:11,fontWeight:700,color:cp>=0?C.up:C.down,fontFamily:M}},(cp>=0?"▲+":"▼")+idx.changeP+"%")
+        )})
+      ),
+      // Search
+      e("div",{style:{display:"flex",alignItems:"center",gap:8}},
+        e("div",{style:{display:"flex",alignItems:"center",gap:6,background:C.card,borderRadius:8,padding:"7px 10px",border:"1px solid "+C.border,flex:"1 1 200px",maxWidth:280}},e("span",{style:{color:C.textMuted}},"🔍"),e("input",{value:usearch,onChange:function(ev){setUsearch(ev.target.value)},placeholder:"搜尋美股 (NVDA, 輝達)...",style:{border:"none",background:"transparent",color:C.text,outline:"none",fontSize:12,width:"100%"}}))
+      ),
+      // Detail
+      usel&&e("div",{style:Object.assign({},cS,{padding:0,border:"1px solid "+C.blue+"33"})},
+        e("div",{style:{padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"start",borderBottom:"1px solid "+C.border,flexWrap:"wrap",gap:12}},
+          e("div",null,e("h2",{style:{margin:0,fontSize:20,fontWeight:800}},usel.name,e("span",{style:{fontSize:14,color:C.textMuted,marginLeft:8,fontFamily:M}},usel.id)),e("div",{style:{display:"flex",gap:6,marginTop:4}},e(Pill,{color:C.purple},usel.sector),e(Pill,{color:C.blue},"NYSE/NASDAQ"))),
+          e("button",{onClick:function(){setUsel(null)},style:{background:"transparent",border:"1px solid "+C.border,borderRadius:7,padding:"5px 10px",color:C.textDim,cursor:"pointer",fontSize:11}},"✕")
+        ),
+        e("div",{style:{padding:"12px 20px",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:8}},
+          [{l:"現價(USD)",v:"$"+usel.price,c:parseFloat(usel.changeP)>=0?C.up:C.down},{l:"漲跌",v:(parseFloat(usel.changeP)>=0?"+":"")+usel.changeP+"%",c:parseFloat(usel.changeP)>=0?C.up:C.down},{l:"市值",v:fmtMcap(usel.marketCap),c:C.text},{l:"成交量",v:fmtVol(usel.volume),c:C.text}].map(function(m,i){return e("div",{key:i,style:{background:C.surface,borderRadius:8,padding:10}},e("div",{style:{fontSize:9,color:C.textMuted}},m.l),e("div",{style:{fontSize:16,fontWeight:800,color:m.c,fontFamily:M}},m.v))})
+        ),
+        usel.tw_related&&usel.tw_related.length>0&&e("div",{style:{padding:"0 20px 16px"}},
+          e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
+            e("div",{style:{fontSize:11,fontWeight:700,color:C.orange,marginBottom:6}},"🔗 台股供應鏈連動"),
+            e("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},usel.tw_related.map(function(tid){var tw=twStocks.find(function(s){return s.id===tid});return e("span",{key:tid,onClick:function(){if(tw){setSel(tw);setTab("tw")}},style:{padding:"4px 10px",borderRadius:6,background:C.accentDim,border:"1px solid "+C.accent+"33",color:C.accent,fontSize:11,fontWeight:600,cursor:"pointer"}},tw?tw.name+"("+tid+")":tid)}))
+          )
+        )
+      ),
+      // US Table
+      e("div",{style:{overflowX:"auto"}},e("table",{style:{width:"100%",borderCollapse:"separate",borderSpacing:"0 5px"}},
+        e("thead",null,e("tr",null,["代號","名稱","產業","現價(USD)","漲跌%","走勢","成交量","市值","台股連動"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
+        e("tbody",null,filteredUS.map(function(s){var cp=parseFloat(s.changeP);return e("tr",{key:s.id,onClick:function(){setUsel(s)},style:{cursor:"pointer"},onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},onMouseLeave:function(ev){ev.currentTarget.style.background=C.card}},
+          e("td",{style:{padding:8,background:C.card,borderRadius:"8px 0 0 8px",fontFamily:M,fontSize:13,fontWeight:800,color:C.blue}},s.id),
+          e("td",{style:{padding:8,background:C.card,fontWeight:700,fontSize:12}},s.name),
+          e("td",{style:{padding:8,background:C.card}},e(Pill,{color:C.purple},s.sector)),
+          e("td",{style:{padding:8,background:C.card,fontFamily:M,fontWeight:800,fontSize:14}},"$"+s.price),
+          e("td",{style:{padding:8,background:C.card,color:cp>=0?C.up:C.down,fontFamily:M,fontWeight:700,fontSize:12}},(cp>=0?"▲+":"▼")+s.changeP+"%"),
+          e("td",{style:{padding:8,background:C.card}},e(Spark,{data:s.history,color:cp>=0?C.up:C.down})),
+          e("td",{style:{padding:8,background:C.card,fontSize:11,color:C.textDim}},fmtVol(s.volume)),
+          e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M}},fmtMcap(s.marketCap)),
+          e("td",{style:{padding:8,background:C.card,borderRadius:"0 8px 8px 0"}},s.tw_related&&s.tw_related.length>0?e("span",{style:{fontSize:10,color:C.orange}},s.tw_related.join(", ")):e("span",{style:{fontSize:10,color:C.textMuted}},"-"))
+        )}))
+      ))
+    ),
+
+    // ══ CORRELATION ══
+    tab==="link"&&e("div",{style:{display:"flex",flexDirection:"column",gap:14}},
+      e("div",{style:Object.assign({},cS,{padding:16,background:"linear-gradient(135deg,"+C.orange+"11,"+C.surface+")",border:"1px solid "+C.orange+"33"})},
+        e("h3",{style:{margin:"0 0 6px",fontSize:15,fontWeight:700}},"🔗 台美供應鏈連動分析"),
+        e("p",{style:{margin:0,fontSize:12,color:C.textDim}},"當美股龍頭波動超過 2% 時，自動提示相關台股供應鏈標的，幫助你掌握盤前布局先機")
+      ),
+      alerts.length===0?e("div",{style:Object.assign({},cS,{padding:20,textAlign:"center"})},e("div",{style:{fontSize:40,marginBottom:8}},"✅"),e("div",{style:{fontSize:14,color:C.textDim}},"今日美股無重大波動（< 2%），台股供應鏈暫無連動警報")):
+      alerts.map(function(a,i){var cp=parseFloat(a.cp);return e("div",{key:i,style:Object.assign({},cS,{padding:16,borderLeft:"4px solid "+(cp>0?C.up:C.down)})},
+        e("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}},
+          e("div",{style:{display:"flex",alignItems:"center",gap:8}},
+            e("span",{style:{fontSize:22}},cp>0?"📈":"📉"),
+            e("span",{style:{fontSize:16,fontWeight:800}},a.name),
+            e("span",{style:{fontSize:14,color:C.textMuted,fontFamily:M}},a.us)
+          ),
+          e("span",{style:{fontSize:20,fontWeight:900,fontFamily:M,color:cp>0?C.up:C.down}},(cp>0?"+":"")+a.cp+"%")
+        ),
+        e("div",{style:{fontSize:13,color:C.textDim,marginBottom:10}},a.msg),
+        e("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
+          a.tw.map(function(tid){var tw=twStocks.find(function(s){return s.id===tid});return e("span",{key:tid,onClick:function(){if(tw){setSel(tw);setTab("tw")}},style:{padding:"5px 12px",borderRadius:8,background:cp>0?C.accentDim:C.dangerDim,border:"1px solid "+(cp>0?C.accent:C.danger)+"33",color:cp>0?C.accent:C.danger,fontSize:12,fontWeight:700,cursor:"pointer"}},tw?tw.name+"("+tid+")":tid)}))
+        )
+      )})
+    ),
+
+    // ══ AI ADVISOR ══
+    tab==="advisor"&&e("div",{style:{display:"flex",flexDirection:"column",gap:16}},
+      e("div",{style:Object.assign({},cS,{padding:20,background:"linear-gradient(135deg,"+C.card+","+C.surface+")"})},
+        e("h2",{style:{margin:"0 0 14px",fontSize:17,fontWeight:800}},"🤖 台美股 AI 投資策略日報 — "+new Date().toLocaleDateString("zh-TW",{year:"numeric",month:"long",day:"numeric"})),
+        e("div",{style:{background:C.surface,borderRadius:10,padding:16,fontSize:13,lineHeight:1.9,color:C.textDim}},
+          e("p",{style:{margin:"0 0 10px"}},e("strong",{style:{color:C.accent}},"【台股研判・偏多】"),"加權指數量能擴增至3,856億，外資連3日買超累計逾600億。費半隔夜大漲1.35%創新高，台系半導體與AI族群受惠。"),
+          e("p",{style:{margin:"0 0 10px"}},e("strong",{style:{color:C.blue}},"【美股觀察】"),"NVIDIA領漲費半，AI伺服器需求持續加溫。S&P 500穩站5,900點上方，Fed降息預期支撐市場情緒。注意INTC持續走弱、MU記憶體下跌對相關台股影響。"),
+          e("p",{style:{margin:"0 0 10px"}},e("strong",{style:{color:C.orange}},"【台美連動】"),"SMCI大漲3.9%，留意廣達、緯穎跟漲機會。INTC跌3%，台積電/日月光可能短線承壓但長線受惠轉單效應。PLTR續漲，AI軟體題材可留意台股AI概念股。"),
+          e("p",{style:{margin:0}},e("strong",{style:{color:C.warn}},"【操作建議】"),"台股長線加碼AI三巨頭（廣達、緯穎、世芯），台積電逢千元以下布局。美股核心持有NVDA/MSFT/GOOGL，半導體ETF(SOXX)可定期定額。金融存股兆豐金殖利率5.5%。")
+        )
+      ),
       e("div",{style:{background:C.dangerDim,borderRadius:10,padding:14,border:"1px solid "+C.danger+"22"}},
         e("div",{style:{fontSize:12,fontWeight:700,color:C.danger,marginBottom:4}},"⚠️ 投資風險警語"),
-        e("p",{style:{margin:0,fontSize:11,color:C.textDim,lineHeight:1.7}},"本系統提供之投資建議僅供參考，不構成投資邀約或獲利保證。AI評分依據公開財務數據、法人籌碼、技術指標及產業趨勢綜合計算。投資人應自行評估風險，審慎決策。")
+        e("p",{style:{margin:0,fontSize:11,color:C.textDim,lineHeight:1.7}},"本系統提供之投資建議僅供參考，不構成投資邀約或獲利保證。台股及美股投資均具有風險，匯率波動可能影響美股投資報酬。投資人應自行評估風險承受能力，審慎決策。")
       )
     )
   ),
 
   // FOOTER
   e("footer",{style:{padding:"14px 20px",borderTop:"1px solid "+C.border,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:6}},
-    e("span",{style:{fontSize:9,color:C.textMuted}},"台股日監測 Agent Pro v2.0 · TWSE / TPEx / MOPS / FinMind"),
+    e("span",{style:{fontSize:9,color:C.textMuted}},"台美股日監測 Agent Pro v3.0 · TWSE / TPEx / Yahoo Finance / AI Analysis"),
     e("span",{style:{fontSize:9,color:C.textMuted}},"⚠️ 資訊僅供參考 · 投資有風險")
   )
 )
 }
-
-// ═══ MOUNT ═══
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
 </body>
