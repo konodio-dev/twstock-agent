@@ -1,9 +1,13 @@
-name: "台股資料每日更新"
+name: "台股美股資料每日更新"
 
 on:
   schedule:
-    - cron: "0 9 * * 1-5"
+    # 台股盤前 08:30 台灣 = UTC 00:30
     - cron: "30 0 * * 1-5"
+    # 台股盤後 17:00 台灣 = UTC 09:00
+    - cron: "0 9 * * 1-5"
+    # 美股盤後 05:30 台灣 = UTC 21:30 (前一天)
+    - cron: "30 21 * * 1-5"
   workflow_dispatch:
 
 permissions:
