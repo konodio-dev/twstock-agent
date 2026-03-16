@@ -73,9 +73,10 @@ var tabs=[{k:"tw",l:"🇹🇼 台股監測"},{k:"ipo",l:"🎫 IPO抽籤"},{k:"us
 var twList=[],usList=[],ipoList=[],alerts=[],usIdx=[],genTime="";
 if(data){
   genTime=data.generated||"";
-  // TW stocks
-  if(data.tw_stocks){
-    twList=Object.values(data.tw_stocks).filter(function(s){return s.name&&s.price>0});
+  // TW stocks - support both v2 "stocks" and v3 "tw_stocks"
+  var rawTW=data.tw_stocks||data.stocks||{};
+  if(rawTW){
+    twList=Object.values(rawTW).filter(function(s){return s.name&&s.price>0});
     twList.forEach(function(s){
       s.changeP=s.changeP||"0.00";
       s.vol_str=fmtVol(s.volume);
