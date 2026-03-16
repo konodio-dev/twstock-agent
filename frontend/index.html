@@ -294,7 +294,7 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
         ),
         e("div",{style:{fontSize:13,color:C.textDim,marginBottom:10}},a.msg),
         e("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
-          a.tw.map(function(tid){var tw=twStocks.find(function(s){return s.id===tid});return e("span",{key:tid,onClick:function(){if(tw){setSel(tw);setTab("tw")}},style:{padding:"5px 12px",borderRadius:8,background:cp>0?C.accentDim:C.dangerDim,border:"1px solid "+(cp>0?C.accent:C.danger)+"33",color:cp>0?C.accent:C.danger,fontSize:12,fontWeight:700,cursor:"pointer"}},tw?tw.name+"("+tid+")":tid)}))
+          a.tw.map(function(tid){var tw=twStocks.find(function(s){return s.id===tid});return e("span",{key:tid,onClick:function(){if(tw){setSel(tw);setTab("tw")}},style:{padding:"5px 12px",borderRadius:8,background:cp>0?C.accentDim:C.dangerDim,border:"1px solid "+(cp>0?C.accent:C.danger)+"33",color:cp>0?C.accent:C.danger,fontSize:12,fontWeight:700,cursor:"pointer"}},tw?tw.name+"("+tid+")":tid)})
         )
       )})
     ),
