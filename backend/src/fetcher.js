@@ -298,12 +298,22 @@ async function fetchTWSEIndex() {
 // ═══════════════════════════════════════════════════════════════════
 // 市場統計（漲跌家數等）
 // ═══════════════════════════════════════════════════════════════════
+function isRealStock(s) {
+  // 過濾權證(6碼7/0開頭)、牛熊證、購售權證
+  var id = s.id || "";
+  if (id.length > 4 && /^[037]/.test(id)) return false; // 權證
+  if (/購|售|牛|熊|展延/.test(s.name || "")) return false;
+  if (id.length === 6) return false; // 所有6碼都排除
+  return true;
+}
+
 function computeMarketStats(twStocks) {
   var up = 0, down = 0, flat = 0, limit_up = 0, limit_down = 0;
   var totalVol = 0;
   var topGainers = [], topLosers = [], topVolume = [];
 
-  var list = Object.values(twStocks).filter(function(s) { return s.price > 0; });
+  var allList = Object.values(twStocks).filter(function(s) { return s.price > 0; });
+  var list = allList.filter(isRealStock);
 
   list.forEach(function(s) {
     var cp = parseFloat(s.changeP) || 0;
