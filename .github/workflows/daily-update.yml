@@ -41,6 +41,20 @@ jobs:
         env:
           TZ: "Asia/Taipei"
       
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Install Python dependencies
+        run: pip install yfinance pandas numpy requests
+
+      - name: 🧠 Run enhanced analysis
+        run: python backend/enhanced_analyzer.py
+        env:
+          FINMIND_API_TOKEN: ${{ secrets.FINMIND_API_TOKEN }}
+          TZ: "Asia/Taipei"
+
       - name: 📁 Copy data to frontend
         run: |
           mkdir -p frontend/data

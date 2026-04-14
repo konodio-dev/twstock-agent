@@ -29,6 +29,7 @@ var C={bg:"#060b14",surface:"#0d1420",card:"#131c2e",cardHover:"#182438",border:
 var F="'Noto Sans TC',system-ui,sans-serif",M="'JetBrains Mono',monospace";
 var cS={background:C.card,borderRadius:14,border:"1px solid "+C.border,overflow:"hidden"};
 var DATA_URL="https://konodio-dev.github.io/twstock-agent/frontend/data/latest.json";
+var ENH_URL="https://konodio-dev.github.io/twstock-agent/frontend/data/enhanced.json";
 
 function Pill(p){return e("span",{style:{fontSize:10,padding:"2px 7px",borderRadius:4,background:(p.color||C.blue)+"18",color:p.color||C.blue,fontWeight:600,whiteSpace:"nowrap"}},p.children)}
 function fmtVol(v){if(!v)return"-";if(v>=1e8)return(v/1e8).toFixed(1)+"億";if(v>=1e4)return(v/1e4).toFixed(0)+"萬";return v+""}
@@ -70,9 +71,99 @@ function TIPanel(p){
   )
 }
 
+function ScoreBadge(p){
+  var sc=p.score;if(sc==null)return null;
+  var col=sc>=70?C.accent:sc>=55?C.blue:sc>=40?C.warn:C.danger;
+  return e("span",{style:{display:"inline-flex",alignItems:"center",gap:4,fontSize:10,padding:"2px 8px",borderRadius:10,background:col+"18",color:col,fontWeight:800,fontFamily:M}},Math.round(sc))
+}
+
+function RecLabel(p){
+  if(!p.rec)return null;
+  var act=p.rec.action||"";var label=p.rec.label||"";
+  var col=act==="strong_buy"||act==="buy"?C.accent:act==="accumulate"?C.blue:act==="reduce"||act==="sell"?C.danger:act==="cautious"?C.warn:C.textDim;
+  return e("span",{style:{fontSize:9,padding:"2px 6px",borderRadius:4,background:col+"18",color:col,fontWeight:700}},label)
+}
+
+function EnhancedPanel(p){
+  var enh=p.enh;if(!enh)return null;
+  var ts=enh.total_score||{};var tech=enh.technical||{};var chip=enh.chip||{};var fund=enh.fundamental||{};var ind=enh.industry_score||{};var tgt=enh.targets||{};var rev=enh.revenue||{};var dvd=enh.dividend||{};var rec=enh.recommendation||{};
+  function scoreBar(label,score,weight){
+    return e("div",{style:{marginBottom:6}},
+      e("div",{style:{display:"flex",justifyContent:"space-between",fontSize:10,marginBottom:2}},
+        e("span",{style:{color:C.textMuted}},label+" ("+weight+")"),
+        e("span",{style:{fontFamily:M,fontWeight:700,color:score>=60?C.accent:score>=40?C.warn:C.danger}},score)
+      ),
+      e("div",{style:{height:5,background:C.border,borderRadius:3,overflow:"hidden"}},
+        e("div",{style:{width:score+"%",height:"100%",background:score>=60?C.accent:score>=40?C.warn:C.danger,borderRadius:3}}))
+    )
+  }
+  var wUsed=ts.weights_used||{fundamental:0.4,chip:0.3,technical:0.2,industry:0.1};
+  return e("div",{style:{display:"flex",flexDirection:"column",gap:10}},
+    // Total score + recommendation
+    e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
+      e("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}},
+        e("div",{style:{fontSize:11,fontWeight:700,color:C.purple}},"🧠 AI 多因子評分"),
+        e("div",{style:{display:"flex",alignItems:"center",gap:8}},
+          e(ScoreBadge,{score:ts.total}),
+          e(RecLabel,{rec:rec})
+        )
+      ),
+      scoreBar("基本面",fund.score||50,Math.round((wUsed.fundamental||0.4)*100)+"%"),
+      scoreBar("籌碼面",chip.score||50,Math.round((wUsed.chip||0.3)*100)+"%"),
+      scoreBar("技術面",tech.tech_score||50,Math.round((wUsed.technical||0.2)*100)+"%"),
+      scoreBar("產業趨勢",ind.score||50,Math.round((wUsed.industry||0.1)*100)+"%"),
+      rec.reason&&e("div",{style:{fontSize:10,color:C.textDim,marginTop:6,padding:"6px 8px",background:C.card,borderRadius:6}},rec.reason)
+    ),
+    // Technical enhanced: ATR, S/R, Volume
+    e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
+      e("div",{style:{fontSize:11,fontWeight:700,color:C.blue,marginBottom:8}},"📊 進階技術指標"),
+      e("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}},
+        [{l:"ATR",v:tech.atr?tech.atr.toFixed(1):"-"},{l:"ATR%",v:tech.atr_pct?tech.atr_pct.toFixed(1)+"%":"-"},{l:"MA60",v:tech.ma60||"-"},
+         {l:"支撐",v:tech.support||"-",c:C.accent},{l:"壓力",v:tech.resistance||"-",c:C.danger},{l:"量比",v:tech.volume?tech.volume.ratio.toFixed(2)+"x":"-"}
+        ].map(function(m,i){return e("div",{key:i,style:{background:C.card,borderRadius:6,padding:"6px 8px"}},
+          e("div",{style:{fontSize:8,color:C.textMuted}},m.l),
+          e("div",{style:{fontSize:12,fontWeight:700,fontFamily:M,color:m.c||C.text}},m.v))
+        })
+      )
+    ),
+    // Institutional multi-period
+    chip.periods&&e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
+      e("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
+        e("div",{style:{fontSize:11,fontWeight:700,color:C.orange}},"🏦 法人多週期趨勢"),
+        chip.trend&&e(Pill,{color:chip.trend.indexOf("buy")>=0?C.accent:chip.trend.indexOf("sell")>=0?C.danger:C.warn},chip.trend.replace("_"," "))
+      ),
+      e("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,fontSize:10}},
+        ["5d","20d","60d"].map(function(period){
+          var pd=chip.periods[period]||{};
+          return e("div",{key:period,style:{background:C.card,borderRadius:6,padding:8}},
+            e("div",{style:{fontSize:9,color:C.textMuted,marginBottom:4}},period.toUpperCase()),
+            e("div",{style:{display:"flex",justifyContent:"space-between"}},e("span",{style:{color:C.textMuted}},"外資"),e("span",{style:{fontFamily:M,fontWeight:700,color:pd.foreign>0?C.up:pd.foreign<0?C.down:C.flat}},(pd.foreign>0?"+":"")+Math.round(pd.foreign||0))),
+            e("div",{style:{display:"flex",justifyContent:"space-between"}},e("span",{style:{color:C.textMuted}},"投信"),e("span",{style:{fontFamily:M,fontWeight:700,color:pd.trust>0?C.up:pd.trust<0?C.down:C.flat}},(pd.trust>0?"+":"")+Math.round(pd.trust||0)))
+          )
+        })
+      )
+    ),
+    // Revenue + Targets
+    e("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}},
+      e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
+        e("div",{style:{fontSize:11,fontWeight:700,color:C.gold,marginBottom:6}},"📈 營收趨勢"),
+        rev.yoy_change!=null&&e("div",{style:{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:3}},e("span",{style:{color:C.textMuted}},"YoY"),e("span",{style:{fontFamily:M,fontWeight:700,color:rev.yoy_change>0?C.up:C.down}},(rev.yoy_change>0?"+":"")+rev.yoy_change.toFixed(1)+"%")),
+        rev.mom_change!=null&&e("div",{style:{display:"flex",justifyContent:"space-between",fontSize:11}},e("span",{style:{color:C.textMuted}},"MoM"),e("span",{style:{fontFamily:M,fontWeight:700,color:rev.mom_change>0?C.up:C.down}},(rev.mom_change>0?"+":"")+rev.mom_change.toFixed(1)+"%")),
+        dvd.latest_cash&&e("div",{style:{display:"flex",justifyContent:"space-between",fontSize:11,marginTop:3}},e("span",{style:{color:C.textMuted}},"最新股利"),e("span",{style:{fontFamily:M,fontWeight:700,color:C.gold}},dvd.latest_cash))
+      ),
+      e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
+        e("div",{style:{fontSize:11,fontWeight:700,color:C.accent,marginBottom:6}},"🎯 目標價"),
+        tgt.short_term&&e("div",{style:{fontSize:11,marginBottom:3}},e("span",{style:{color:C.textMuted}},"短線 "),e("span",{style:{fontFamily:M,fontWeight:700}},tgt.short_term.low+" ~ "+tgt.short_term.high)),
+        tgt.long_term&&tgt.long_term.low&&e("div",{style:{fontSize:11}},e("span",{style:{color:C.textMuted}},"長線 "),e("span",{style:{fontFamily:M,fontWeight:700}},tgt.long_term.low+" ~ "+tgt.long_term.high))
+      )
+    )
+  )
+}
+
 function App(){
 var _t=useState("overview"),tab=_t[0],setTab=_t[1];
 var _d=useState(null),data=_d[0],setData=_d[1];
+var _enh=useState(null),enhanced=_enh[0],setEnhanced=_enh[1];
 var _err=useState(null),err=_err[0],setErr=_err[1];
 var _loading=useState(true),loading=_loading[0],setLoading=_loading[1];
 var _sel=useState(null),sel=_sel[0],setSel=_sel[1];
@@ -81,7 +172,10 @@ var _search=useState(""),search=_search[0],setSearch=_search[1];
 var _usearch=useState(""),usearch=_usearch[0],setUsearch=_usearch[1];
 
 useEffect(function(){
-  fetch(DATA_URL).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(json){setData(json);setLoading(false)}).catch(function(e){setErr("資料載入失敗");setLoading(false)});
+  Promise.all([
+    fetch(DATA_URL).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}),
+    fetch(ENH_URL).then(function(r){return r.ok?r.json():null}).catch(function(){return null})
+  ]).then(function(res){setData(res[0]);setEnhanced(res[1]);setLoading(false)}).catch(function(e){setErr("資料載入失敗");setLoading(false)});
 },[]);
 
 var tabs=[
@@ -117,6 +211,7 @@ if(data){
   if(data.correlation_alerts){alerts=data.correlation_alerts}
 }
 
+function getEnh(id){return enhanced&&enhanced.stocks?enhanced.stocks[id]:null}
 var filteredTW=twList.filter(function(s){return!search||s.name.indexOf(search)>=0||s.id.indexOf(search)>=0});
 var filteredUS=usList.filter(function(s){return!usearch||s.name.indexOf(usearch)>=0||s.id.toUpperCase().indexOf(usearch.toUpperCase())>=0||(s.name_en||"").toUpperCase().indexOf(usearch.toUpperCase())>=0});
 
@@ -237,7 +332,7 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
     // TAB: AI策略
     // ═══════════════════════════════════
     !loading&&data&&tab==="ai"&&e("div",{className:"fade-in",style:{display:"flex",flexDirection:"column",gap:12}},
-      e(SectionCard,{icon:"🤖",title:"AI 策略訊號",desc:"根據 RSI、KD、MACD 技術指標 + 法人動向綜合分析，追蹤清單 23 檔個股",borderColor:C.purple+"33",gradient:"linear-gradient(135deg,"+C.purple+"11,"+C.surface+")"}),
+      e(SectionCard,{icon:"🤖",title:"AI 多因子策略訊號",desc:"基本面(40%) + 籌碼面(30%) + 技術面(20%) + 產業趨勢(10%) 加權評分，動態市場情緒權重調整",borderColor:C.purple+"33",gradient:"linear-gradient(135deg,"+C.purple+"11,"+C.surface+")"}),
       e("div",{style:{fontSize:10,color:C.textMuted,padding:"0 4px"}},"⚠️ 以下訊號僅供參考，不構成投資建議，請搭配自身判斷"),
 
       aiSigs.length===0?e("div",{style:Object.assign({},cS,{padding:30,textAlign:"center"})},
@@ -309,18 +404,23 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
           )
         ),
         // Technical Indicators Panel
-        e("div",{style:{padding:"0 20px 16px"}},
+        e("div",{style:{padding:"0 20px 12px"}},
           e("div",{style:{background:C.surface,borderRadius:8,padding:12}},
             e("div",{style:{fontSize:11,fontWeight:700,marginBottom:8,color:C.purple}},"📐 技術指標 KD / RSI / MACD"),
             e(TIPanel,{ti:sel.ti})
           )
+        ),
+        // Enhanced Analysis Panel
+        e("div",{style:{padding:"0 20px 16px"}},
+          e(EnhancedPanel,{enh:getEnh(sel.id)})
         )
       ),
       // Table
       e("div",{style:{overflowX:"auto"}},
         e("table",{style:{width:"100%",borderCollapse:"separate",borderSpacing:"0 4px"}},
-          e("thead",null,e("tr",null,["代號","名稱","現價","漲跌%","成交量","本益比","殖利率","外資","投信","訊號"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
+          e("thead",null,e("tr",null,["代號","名稱","現價","漲跌%","AI分","建議","成交量","外資","投信","訊號"].map(function(h){return e("th",{key:h,style:{padding:"6px 8px",fontSize:10,color:C.textMuted,fontWeight:600,textAlign:"left"}},h)}))),
           e("tbody",null,filteredTW.slice(0,100).map(function(s){
+            var se=getEnh(s.id);var seTotal=se&&se.total_score?se.total_score.total:null;var seRec=se?se.recommendation:null;
             return e("tr",{key:s.id,onClick:function(){setSel(s)},style:{cursor:"pointer"},
               onMouseEnter:function(ev){ev.currentTarget.style.background=C.cardHover},
               onMouseLeave:function(ev){ev.currentTarget.style.background=C.card}},
@@ -328,9 +428,9 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
               e("td",{style:{padding:8,background:C.card,fontWeight:700,fontSize:12}},s.name),
               e("td",{style:{padding:8,background:C.card,fontFamily:M,fontWeight:800}},"$"+s.price),
               e("td",{style:{padding:8,background:C.card,color:pColor(s.changeP),fontFamily:M,fontWeight:700,fontSize:12}},fmtP(s.changeP)),
+              e("td",{style:{padding:8,background:C.card}},seTotal!=null?e(ScoreBadge,{score:seTotal}):e("span",{style:{fontSize:10,color:C.textMuted}},"-")),
+              e("td",{style:{padding:8,background:C.card}},seRec?e(RecLabel,{rec:seRec}):e("span",{style:{fontSize:10,color:C.textMuted}},"-")),
               e("td",{style:{padding:8,background:C.card,fontSize:11,color:C.textDim}},s.vol_str),
-              e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M}},s.pe?s.pe.toFixed(1):"-"),
-              e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M,color:s.dividend_yield>4?C.gold:C.text}},s.dividend_yield?s.dividend_yield+"%":"-"),
               e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M,color:s.foreign_buy>0?C.up:s.foreign_buy<0?C.down:C.flat}},s.foreign_buy||"-"),
               e("td",{style:{padding:8,background:C.card,fontSize:11,fontFamily:M,color:s.trust_buy>0?C.up:s.trust_buy<0?C.down:C.flat}},s.trust_buy||"-"),
               e("td",{style:{padding:8,background:C.card,borderRadius:"0 8px 8px 0"}},s.ti?e(TIBadge,{ti:s.ti}):e("span",{style:{fontSize:10,color:C.textMuted}},"-"))
@@ -460,7 +560,7 @@ return e("div",{style:{minHeight:"100vh",background:C.bg,color:C.text,fontFamily
 
   // FOOTER
   e("footer",{style:{padding:"14px 20px",borderTop:"1px solid "+C.border,display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:6}},
-    e("span",{style:{fontSize:9,color:C.textMuted}},"台美股日監測 Agent v4.0 · 100% 真實數據 · TWSE / TPEx / Yahoo Finance / wespai.com"),
+    e("span",{style:{fontSize:9,color:C.textMuted}},"台美股日監測 Agent Pro v5.0 · 多因子 AI 分析 · TWSE / TPEx / FinMind / Yahoo Finance"),
     e("span",{style:{fontSize:9,color:C.textMuted}},"⚠️ 資訊僅供參考 · 投資有風險")
   )
 )
