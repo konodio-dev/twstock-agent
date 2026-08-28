@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-28T03:25:26.627642+08:00",
+  "generated_at": "2026-08-28T13:32:19.714641+08:00",
   "market_regime": "normal",
   "stocks": {
     "2330": {
@@ -7,51 +7,51 @@
       "name": "台積電",
       "industry": "半導體-晶圓代工",
       "technical": {
-        "price": null,
-        "rsi": 53.6199,
+        "price": 2420.0,
+        "rsi": 54.9272,
         "macd": {
-          "macd": 6.83,
-          "signal": 4.3025,
-          "histogram": 2.5275,
+          "macd": 9.5401,
+          "signal": 5.5661,
+          "histogram": 3.9741,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 2443.5663,
+          "middle": 2389.25,
+          "lower": 2334.9337,
+          "pct_b": 0.7831,
+          "bandwidth": 0.0455
         },
         "kdj": {
-          "k": 58.4971,
-          "d": 52.5217,
-          "j": 70.4477
+          "k": 68.4229,
+          "d": 60.3724,
+          "j": 84.524
         },
-        "atr": 51.0839,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 48.5797,
+        "atr_pct": 2.0074,
+        "support": 2376.42,
+        "resistance": 2473.58,
+        "ma60": 2383.7578,
         "volume": {
-          "ratio": 0.8126,
-          "avg_20": 21606405.5,
-          "latest": 17557736.0
+          "ratio": 0.6224,
+          "avg_20": 19283674.2,
+          "latest": 12001259.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 2404.0,
+          "ma_long": 2389.25,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 50,
-        "verdict": "中性"
+        "tech_score": 60,
+        "verdict": "偏多"
       },
       "fundamental": {
         "score": 40,
         "pe_fair": 20,
-        "pe_actual": 28.1904,
+        "pe_actual": 28.2875,
         "yoy_change": null,
         "mom_change": null
       },
@@ -73,10 +73,10 @@
         ]
       },
       "total_score": {
-        "total": 48.5,
+        "total": 50.5,
         "fundamental_score": 40,
         "chip_score": 50,
-        "tech_score": 50,
+        "tech_score": 60,
         "industry_score": 75,
         "weights_used": {
           "fundamental": 0.4,
@@ -87,22 +87,22 @@
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 2376.42,
+          "high": 2473.58,
+          "range_pct": 4.01
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 1936.0,
+          "high": 2904.0
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "台積電指標中性，建議持有觀察",
-        "total_score": 48.5,
-        "target_low": null,
-        "target_high": null
+        "total_score": 50.5,
+        "target_low": 2376.42,
+        "target_high": 2473.58
       },
       "sentiment": {
         "score": 50,
@@ -127,40 +127,40 @@
       "name": "鴻海",
       "industry": "電子代工-EMS",
       "technical": {
-        "price": null,
-        "rsi": 46.4093,
+        "price": 252.0,
+        "rsi": 53.8839,
         "macd": {
-          "macd": -1.0775,
-          "signal": 0.3688,
-          "histogram": -1.4463,
+          "macd": -0.5166,
+          "signal": 0.2483,
+          "histogram": -0.7649,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 270.4081,
+          "middle": 254.15,
+          "lower": 237.8919,
+          "pct_b": 0.4339,
+          "bandwidth": 0.1279
         },
         "kdj": {
-          "k": 19.1751,
-          "d": 20.0512,
-          "j": 17.4227
+          "k": 47.274,
+          "d": 32.0193,
+          "j": 77.7836
         },
-        "atr": 7.72,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 7.7273,
+        "atr_pct": 3.0664,
+        "support": 245.44,
+        "resistance": 260.89,
+        "ma60": 249.6805,
         "volume": {
-          "ratio": 0.9039,
-          "avg_20": 46220112.2,
-          "latest": 41779434.0
+          "ratio": 0.6603,
+          "avg_20": 42769325.6,
+          "latest": 28241841.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 247.4,
+          "ma_long": 254.15,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
@@ -171,7 +171,7 @@
       "fundamental": {
         "score": 50,
         "pe_fair": 15,
-        "pe_actual": 16.6777,
+        "pe_actual": 16.6667,
         "yoy_change": null,
         "mom_change": null
       },
@@ -189,36 +189,36 @@
         "hot_matches": []
       },
       "total_score": {
-        "total": 48.0,
+        "total": 47.0,
         "fundamental_score": 50,
         "chip_score": 50,
         "tech_score": 40,
         "industry_score": 50,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 245.44,
+          "high": 260.89,
+          "range_pct": 6.13
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 201.6,
+          "high": 302.4
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "鴻海指標中性，建議持有觀察",
-        "total_score": 48.0,
-        "target_low": null,
-        "target_high": null
+        "total_score": 47.0,
+        "target_low": 245.44,
+        "target_high": 260.89
       },
       "sentiment": {
         "score": 50,
@@ -243,51 +243,51 @@
       "name": "聯發科",
       "industry": "半導體-IC設計",
       "technical": {
-        "price": null,
-        "rsi": 51.6327,
+        "price": 3985.0,
+        "rsi": 53.3746,
         "macd": {
-          "macd": -6.2175,
-          "signal": -0.1812,
-          "histogram": -6.0363,
-          "cross_up": false,
+          "macd": 6.037,
+          "signal": 2.9653,
+          "histogram": 3.0718,
+          "cross_up": true,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 4205.1982,
+          "middle": 3929.5,
+          "lower": 3653.8018,
+          "pct_b": 0.6007,
+          "bandwidth": 0.1403
         },
         "kdj": {
-          "k": 23.8662,
-          "d": 25.7533,
-          "j": 20.0918
+          "k": 46.6424,
+          "d": 33.2582,
+          "j": 73.4109
         },
-        "atr": 202.43,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 194.0655,
+        "atr_pct": 4.8699,
+        "support": 3772.6,
+        "resistance": 4160.73,
+        "ma60": 3957.0298,
         "volume": {
-          "ratio": 0.7503,
-          "avg_20": 7489491.2,
-          "latest": 5619342.0
+          "ratio": 0.5387,
+          "avg_20": 7523573.6,
+          "latest": 4053155.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 3859.0,
+          "ma_long": 3929.5,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
         },
-        "tech_score": 40,
+        "tech_score": 55,
         "verdict": "中性"
       },
       "fundamental": {
         "score": 30,
         "pe_fair": 20,
-        "pe_actual": 64.0325,
+        "pe_actual": 65.59,
         "yoy_change": null,
         "mom_change": null
       },
@@ -309,36 +309,36 @@
         ]
       },
       "total_score": {
-        "total": 42.5,
+        "total": 49.2,
         "fundamental_score": 30,
         "chip_score": 50,
-        "tech_score": 40,
+        "tech_score": 55,
         "industry_score": 75,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 3772.6,
+          "high": 4160.73,
+          "range_pct": 9.74
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 3188.0,
+          "high": 4782.0
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "聯發科指標中性，建議持有觀察",
-        "total_score": 42.5,
-        "target_low": null,
-        "target_high": null
+        "total_score": 49.2,
+        "target_low": 3772.6,
+        "target_high": 4160.73
       },
       "sentiment": {
         "score": 50,
@@ -363,51 +363,51 @@
       "name": "廣達",
       "industry": "電子代工-伺服器",
       "technical": {
-        "price": null,
-        "rsi": 55.0687,
+        "price": 332.0,
+        "rsi": 56.807,
         "macd": {
-          "macd": 0.5405,
-          "signal": -1.5744,
-          "histogram": 2.1149,
+          "macd": 1.5646,
+          "signal": -0.8183,
+          "histogram": 2.3828,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 345.7421,
+          "middle": 319.975,
+          "lower": 294.2079,
+          "pct_b": 0.7333,
+          "bandwidth": 0.1611
         },
         "kdj": {
-          "k": 59.3452,
-          "d": 61.6379,
-          "j": 54.76
+          "k": 65.3938,
+          "d": 63.4969,
+          "j": 69.1874
         },
-        "atr": 11.3926,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 10.9537,
+        "atr_pct": 3.2993,
+        "support": 322.55,
+        "resistance": 344.45,
+        "ma60": 337.7322,
         "volume": {
-          "ratio": 0.5867,
-          "avg_20": 19212701.45,
-          "latest": 11272416.0
+          "ratio": 0.5163,
+          "avg_20": 17265627.1,
+          "latest": 8913795.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 330.3,
+          "ma_long": 319.975,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 50,
-        "verdict": "中性"
+        "tech_score": 60,
+        "verdict": "偏多"
       },
       "fundamental": {
         "score": 50,
         "pe_fair": 15,
-        "pe_actual": 14.7501,
+        "pe_actual": 14.6838,
         "yoy_change": null,
         "mom_change": null
       },
@@ -428,36 +428,36 @@
         ]
       },
       "total_score": {
-        "total": 51.5,
+        "total": 55.2,
         "fundamental_score": 50,
         "chip_score": 50,
-        "tech_score": 50,
+        "tech_score": 60,
         "industry_score": 65,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 322.55,
+          "high": 344.45,
+          "range_pct": 6.6
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 265.6,
+          "high": 398.4
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "廣達指標中性，建議持有觀察",
-        "total_score": 51.5,
-        "target_low": null,
-        "target_high": null
+        "total_score": 55.2,
+        "target_low": 322.55,
+        "target_high": 344.45
       },
       "sentiment": {
         "score": 50,
@@ -482,51 +482,51 @@
       "name": "台達電",
       "industry": "電源管理-散熱",
       "technical": {
-        "price": null,
-        "rsi": 45.9764,
+        "price": 1835.0,
+        "rsi": 55.0612,
         "macd": {
-          "macd": -19.7069,
-          "signal": -23.9332,
-          "histogram": 4.2263,
+          "macd": -9.3446,
+          "signal": -19.6254,
+          "histogram": 10.2808,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 1932.7921,
+          "middle": 1756.25,
+          "lower": 1579.7079,
+          "pct_b": 0.723,
+          "bandwidth": 0.201
         },
         "kdj": {
-          "k": 24.2077,
-          "d": 32.2554,
-          "j": 8.1122
+          "k": 42.0606,
+          "d": 34.3761,
+          "j": 57.4295
         },
-        "atr": 97.2935,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 96.0876,
+        "atr_pct": 5.2364,
+        "support": 1732.25,
+        "resistance": 1924.42,
+        "ma60": 1885.4408,
         "volume": {
-          "ratio": 0.7395,
-          "avg_20": 11939701.2,
-          "latest": 8829850.0
+          "ratio": 1.1287,
+          "avg_20": 11027708.0,
+          "latest": 12446758.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
-          "golden_cross": false,
+          "ma_short": 1760.0,
+          "ma_long": 1756.25,
+          "golden_cross": true,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 50,
-        "verdict": "中性"
+        "tech_score": 60,
+        "verdict": "偏多"
       },
       "fundamental": {
         "score": 30,
         "pe_fair": 15,
-        "pe_actual": 56.4954,
+        "pe_actual": 58.5701,
         "yoy_change": null,
         "mom_change": null
       },
@@ -547,36 +547,36 @@
         ]
       },
       "total_score": {
-        "total": 43.5,
+        "total": 49.2,
         "fundamental_score": 30,
         "chip_score": 50,
-        "tech_score": 50,
+        "tech_score": 60,
         "industry_score": 65,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 1732.25,
+          "high": 1924.42,
+          "range_pct": 10.47
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 1468.0,
+          "high": 2202.0
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "台達電指標中性，建議持有觀察",
-        "total_score": 43.5,
-        "target_low": null,
-        "target_high": null
+        "total_score": 49.2,
+        "target_low": 1732.25,
+        "target_high": 1924.42
       },
       "sentiment": {
         "score": 50,
@@ -601,51 +601,51 @@
       "name": "日月光投控",
       "industry": "半導體-封測",
       "technical": {
-        "price": null,
-        "rsi": 46.3642,
+        "price": 620.0,
+        "rsi": 53.9138,
         "macd": {
-          "macd": -6.0091,
-          "signal": -5.7926,
-          "histogram": -0.2164,
+          "macd": -2.7005,
+          "signal": -4.8813,
+          "histogram": 2.1808,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 635.1491,
+          "middle": 603.45,
+          "lower": 571.7509,
+          "pct_b": 0.761,
+          "bandwidth": 0.1051
         },
         "kdj": {
-          "k": 36.1485,
-          "d": 40.5678,
-          "j": 27.3099
+          "k": 54.2657,
+          "d": 45.3184,
+          "j": 72.1604
         },
-        "atr": 30.9468,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 29.5902,
+        "atr_pct": 4.7726,
+        "support": 589.08,
+        "resistance": 648.26,
+        "ma60": 614.3432,
         "volume": {
-          "ratio": 0.6271,
-          "avg_20": 18464606.6,
-          "latest": 11578760.0
+          "ratio": 0.8857,
+          "avg_20": 18917207.4,
+          "latest": 16755191.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 600.0,
+          "ma_long": 603.45,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
         },
-        "tech_score": 40,
+        "tech_score": 50,
         "verdict": "中性"
       },
       "fundamental": {
         "score": 30,
         "pe_fair": 20,
-        "pe_actual": 46.467,
+        "pe_actual": 47.4369,
         "yoy_change": null,
         "mom_change": null
       },
@@ -667,36 +667,36 @@
         ]
       },
       "total_score": {
-        "total": 42.5,
+        "total": 47.8,
         "fundamental_score": 30,
         "chip_score": 50,
-        "tech_score": 40,
+        "tech_score": 50,
         "industry_score": 75,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 589.08,
+          "high": 648.26,
+          "range_pct": 9.55
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 496.0,
+          "high": 744.0
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "日月光投控指標中性，建議持有觀察",
-        "total_score": 42.5,
-        "target_low": null,
-        "target_high": null
+        "total_score": 47.8,
+        "target_low": 589.08,
+        "target_high": 648.26
       },
       "sentiment": {
         "score": 50,
@@ -721,43 +721,159 @@
       "name": "富邦金",
       "industry": "金融-金控",
       "technical": {
-        "price": null,
-        "rsi": 62.8447,
+        "price": 144.0,
+        "rsi": 68.0143,
         "macd": {
-          "macd": 2.7331,
-          "signal": 1.8791,
-          "histogram": 0.854,
+          "macd": 3.8385,
+          "signal": 2.3556,
+          "histogram": 1.4828,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 142.4303,
+          "middle": 131.25,
+          "lower": 120.0697,
+          "pct_b": 1.0702,
+          "bandwidth": 0.1704
         },
         "kdj": {
-          "k": 78.3146,
-          "d": 73.8098,
-          "j": 87.3242
+          "k": 87.2851,
+          "d": 80.1682,
+          "j": 101.5189
         },
-        "atr": 4.6652,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 4.5922,
+        "atr_pct": 3.189,
+        "support": 138.41,
+        "resistance": 147.59,
+        "ma60": 127.138,
         "volume": {
-          "ratio": 1.066,
-          "avg_20": 20215348.55,
-          "latest": 21548837.0
+          "ratio": 0.7202,
+          "avg_20": 19277071.05,
+          "latest": 13883150.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 139.5,
+          "ma_long": 131.25,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
+        },
+        "tech_score": 40,
+        "verdict": "中性"
+      },
+      "fundamental": {
+        "score": 40,
+        "pe_fair": 12,
+        "pe_actual": 17.1838,
+        "yoy_change": null,
+        "mom_change": null
+      },
+      "chip": {
+        "score": 50,
+        "foreign_net": 0,
+        "trust_net": 0,
+        "dealer_net": 0,
+        "periods": {},
+        "trend": "unknown"
+      },
+      "industry_score": {
+        "score": 50,
+        "industry": "金融-金控",
+        "hot_matches": []
+      },
+      "total_score": {
+        "total": 44.0,
+        "fundamental_score": 40,
+        "chip_score": 50,
+        "tech_score": 40,
+        "industry_score": 50,
+        "weights_used": {
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
+        }
+      },
+      "targets": {
+        "short_term": {
+          "low": 138.41,
+          "high": 147.59,
+          "range_pct": 6.38
+        },
+        "long_term": {
+          "low": 115.2,
+          "high": 172.8
+        }
+      },
+      "recommendation": {
+        "action": "hold",
+        "label": "持有觀望",
+        "reason": "富邦金指標中性，建議持有觀察",
+        "total_score": 44.0,
+        "target_low": 138.41,
+        "target_high": 147.59
+      },
+      "sentiment": {
+        "score": 50,
+        "bullish_count": 0,
+        "bearish_count": 0,
+        "label": "中性"
+      },
+      "revenue": {
+        "latest_revenue": null,
+        "mom_change": null,
+        "yoy_change": null,
+        "months": []
+      },
+      "dividend": {
+        "years": [],
+        "avg_yield": null,
+        "latest_cash": null
+      }
+    },
+    "2882": {
+      "stock_id": "2882",
+      "name": "國泰金",
+      "industry": "金融-金控",
+      "technical": {
+        "price": 105.5,
+        "rsi": 63.2472,
+        "macd": {
+          "macd": 1.4019,
+          "signal": 0.9268,
+          "histogram": 0.4752,
+          "cross_up": false,
+          "cross_down": false
+        },
+        "bb": {
+          "upper": 104.2322,
+          "middle": 100.23,
+          "lower": 96.2278,
+          "pct_b": 1.1584,
+          "bandwidth": 0.0799
+        },
+        "kdj": {
+          "k": 67.2893,
+          "d": 56.3925,
+          "j": 89.083
+        },
+        "atr": 3.1116,
+        "atr_pct": 2.9494,
+        "support": 101.72,
+        "resistance": 107.94,
+        "ma60": 99.1992,
+        "volume": {
+          "ratio": 0.822,
+          "avg_20": 18393337.1,
+          "latest": 15120081.0
+        },
+        "ma_crossover": {
+          "ma_short": 102.48,
+          "ma_long": 100.23,
+          "golden_cross": false,
+          "death_cross": false,
+          "bullish": true
         },
         "tech_score": 45,
         "verdict": "中性"
@@ -765,7 +881,7 @@
       "fundamental": {
         "score": 40,
         "pe_fair": 12,
-        "pe_actual": 16.9056,
+        "pe_actual": 14.9433,
         "yoy_change": null,
         "mom_change": null
       },
@@ -797,138 +913,22 @@
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 101.72,
+          "high": 107.94,
+          "range_pct": 5.9
         },
         "long_term": {
-          "low": null,
-          "high": null
-        }
-      },
-      "recommendation": {
-        "action": "hold",
-        "label": "持有觀望",
-        "reason": "富邦金指標中性，建議持有觀察",
-        "total_score": 45.0,
-        "target_low": null,
-        "target_high": null
-      },
-      "sentiment": {
-        "score": 50,
-        "bullish_count": 0,
-        "bearish_count": 0,
-        "label": "中性"
-      },
-      "revenue": {
-        "latest_revenue": null,
-        "mom_change": null,
-        "yoy_change": null,
-        "months": []
-      },
-      "dividend": {
-        "years": [],
-        "avg_yield": null,
-        "latest_cash": null
-      }
-    },
-    "2882": {
-      "stock_id": "2882",
-      "name": "國泰金",
-      "industry": "金融-金控",
-      "technical": {
-        "price": null,
-        "rsi": 57.5203,
-        "macd": {
-          "macd": 0.959,
-          "signal": 0.7785,
-          "histogram": 0.1805,
-          "cross_up": false,
-          "cross_down": false
-        },
-        "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
-        },
-        "kdj": {
-          "k": 55.3483,
-          "d": 48.3175,
-          "j": 69.4098
-        },
-        "atr": 3.1341,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
-        "volume": {
-          "ratio": 0.9016,
-          "avg_20": 19685487.65,
-          "latest": 17748032.0
-        },
-        "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
-          "golden_cross": false,
-          "death_cross": false,
-          "bullish": false
-        },
-        "tech_score": 50,
-        "verdict": "中性"
-      },
-      "fundamental": {
-        "score": 40,
-        "pe_fair": 12,
-        "pe_actual": 14.5184,
-        "yoy_change": null,
-        "mom_change": null
-      },
-      "chip": {
-        "score": 50,
-        "foreign_net": 0,
-        "trust_net": 0,
-        "dealer_net": 0,
-        "periods": {},
-        "trend": "unknown"
-      },
-      "industry_score": {
-        "score": 50,
-        "industry": "金融-金控",
-        "hot_matches": []
-      },
-      "total_score": {
-        "total": 46.0,
-        "fundamental_score": 40,
-        "chip_score": 50,
-        "tech_score": 50,
-        "industry_score": 50,
-        "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
-        }
-      },
-      "targets": {
-        "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
-        },
-        "long_term": {
-          "low": null,
-          "high": null
+          "low": 84.4,
+          "high": 126.6
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "國泰金指標中性，建議持有觀察",
-        "total_score": 46.0,
-        "target_low": null,
-        "target_high": null
+        "total_score": 45.0,
+        "target_low": 101.72,
+        "target_high": 107.94
       },
       "sentiment": {
         "score": 50,
@@ -953,40 +953,40 @@
       "name": "中信金",
       "industry": "金融-金控",
       "technical": {
-        "price": null,
-        "rsi": 48.5301,
+        "price": 64.5,
+        "rsi": 49.0486,
         "macd": {
-          "macd": -0.0897,
-          "signal": 0.0362,
-          "histogram": -0.1258,
+          "macd": -0.1703,
+          "signal": -0.0182,
+          "histogram": -0.152,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 67.3132,
+          "middle": 65.22,
+          "lower": 63.1268,
+          "pct_b": 0.328,
+          "bandwidth": 0.0642
         },
         "kdj": {
-          "k": 44.2062,
-          "d": 44.6979,
-          "j": 43.2229
+          "k": 46.4149,
+          "d": 44.7484,
+          "j": 49.7479
         },
-        "atr": 1.7963,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 1.6964,
+        "atr_pct": 2.6302,
+        "support": 62.57,
+        "resistance": 65.96,
+        "ma60": 65.6635,
         "volume": {
-          "ratio": 0.797,
-          "avg_20": 31813638.8,
-          "latest": 25354701.0
+          "ratio": 0.4946,
+          "avg_20": 30151143.05,
+          "latest": 14913302.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 64.2,
+          "ma_long": 65.22,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
@@ -997,7 +997,7 @@
       "fundamental": {
         "score": 40,
         "pe_fair": 12,
-        "pe_actual": 15.7143,
+        "pe_actual": 15.8621,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1029,13 +1029,13 @@
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 62.57,
+          "high": 65.96,
+          "range_pct": 5.26
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 51.6,
+          "high": 77.4
         }
       },
       "recommendation": {
@@ -1043,8 +1043,8 @@
         "label": "持有觀望",
         "reason": "中信金指標中性，建議持有觀察",
         "total_score": 44.0,
-        "target_low": null,
-        "target_high": null
+        "target_low": 62.57,
+        "target_high": 65.96
       },
       "sentiment": {
         "score": 50,
@@ -1069,51 +1069,51 @@
       "name": "兆豐金",
       "industry": "金融-官股金控",
       "technical": {
-        "price": null,
-        "rsi": 47.9692,
+        "price": 48.15,
+        "rsi": 56.7425,
         "macd": {
-          "macd": 0.0699,
-          "signal": 0.2807,
-          "histogram": -0.2108,
+          "macd": 0.0901,
+          "signal": 0.2276,
+          "histogram": -0.1375,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 49.9076,
+          "middle": 47.557,
+          "lower": 45.2063,
+          "pct_b": 0.6261,
+          "bandwidth": 0.0989
         },
         "kdj": {
-          "k": 55.8417,
-          "d": 49.435,
-          "j": 68.6552
+          "k": 53.9445,
+          "d": 50.2128,
+          "j": 61.4079
         },
-        "atr": 1.2239,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 1.3004,
+        "atr_pct": 2.7006,
+        "support": 46.62,
+        "resistance": 49.22,
+        "ma60": 45.6693,
         "volume": {
-          "ratio": 0.6531,
-          "avg_20": 33813529.55,
-          "latest": 22082842.0
+          "ratio": 1.6353,
+          "avg_20": 34461259.45,
+          "latest": 56353062.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 46.95,
+          "ma_long": 47.557,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
         },
-        "tech_score": 40,
-        "verdict": "中性"
+        "tech_score": 35,
+        "verdict": "偏空"
       },
       "fundamental": {
         "score": 30,
         "pe_fair": 12,
-        "pe_actual": 19.5551,
+        "pe_actual": 20.4025,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1131,10 +1131,10 @@
         "hot_matches": []
       },
       "total_score": {
-        "total": 40.0,
+        "total": 39.0,
         "fundamental_score": 30,
         "chip_score": 50,
-        "tech_score": 40,
+        "tech_score": 35,
         "industry_score": 50,
         "weights_used": {
           "fundamental": 0.4,
@@ -1145,22 +1145,22 @@
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 46.62,
+          "high": 49.22,
+          "range_pct": 5.4
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 38.52,
+          "high": 57.78
         }
       },
       "recommendation": {
         "action": "cautious",
         "label": "謹慎操作",
         "reason": "兆豐金部分指標轉弱，建議減少部位",
-        "total_score": 40.0,
-        "target_low": null,
-        "target_high": null
+        "total_score": 39.0,
+        "target_low": 46.62,
+        "target_high": 49.22
       },
       "sentiment": {
         "score": 50,
@@ -1185,51 +1185,51 @@
       "name": "聯電",
       "industry": "半導體-晶圓代工",
       "technical": {
-        "price": null,
-        "rsi": 48.1231,
+        "price": 130.0,
+        "rsi": 54.7052,
         "macd": {
-          "macd": -3.4883,
-          "signal": -4.7199,
-          "histogram": 1.2316,
+          "macd": -2.4622,
+          "signal": -4.2514,
+          "histogram": 1.7892,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 128.4396,
+          "middle": 120.95,
+          "lower": 113.4604,
+          "pct_b": 1.1042,
+          "bandwidth": 0.1238
         },
         "kdj": {
-          "k": 56.918,
-          "d": 46.4665,
-          "j": 77.8212
+          "k": 67.658,
+          "d": 54.646,
+          "j": 93.6821
         },
-        "atr": 7.2622,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 7.5808,
+        "atr_pct": 5.8314,
+        "support": 119.09,
+        "resistance": 134.25,
+        "ma60": 136.4245,
         "volume": {
-          "ratio": 1.2901,
-          "avg_20": 142146812.9,
-          "latest": 183383177.0
+          "ratio": 2.0686,
+          "avg_20": 155894005.05,
+          "latest": 322486972.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 124.1,
+          "ma_long": 120.95,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 50,
+        "tech_score": 55,
         "verdict": "中性"
       },
       "fundamental": {
-        "score": 60,
+        "score": 50,
         "pe_fair": 20,
-        "pe_actual": 17.9818,
+        "pe_actual": 19.7269,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1251,36 +1251,36 @@
         ]
       },
       "total_score": {
-        "total": 56.5,
-        "fundamental_score": 60,
+        "total": 55.2,
+        "fundamental_score": 50,
         "chip_score": 50,
-        "tech_score": 50,
+        "tech_score": 55,
         "industry_score": 75,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 119.09,
+          "high": 134.25,
+          "range_pct": 11.66
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 104.0,
+          "high": 156.0
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "聯電指標中性，建議持有觀察",
-        "total_score": 56.5,
-        "target_low": null,
-        "target_high": null
+        "total_score": 55.2,
+        "target_low": 119.09,
+        "target_high": 134.25
       },
       "sentiment": {
         "score": 50,
@@ -1305,51 +1305,51 @@
       "name": "大立光",
       "industry": "光學鏡頭",
       "technical": {
-        "price": null,
-        "rsi": 76.5329,
+        "price": 7015.0,
+        "rsi": 81.8447,
         "macd": {
-          "macd": 451.2781,
-          "signal": 337.91,
-          "histogram": 113.3681,
+          "macd": 620.1095,
+          "signal": 409.9157,
+          "histogram": 210.1938,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 6878.4195,
+          "middle": 5127.5516,
+          "lower": 3376.6837,
+          "pct_b": 1.039,
+          "bandwidth": 0.6829
         },
         "kdj": {
-          "k": 92.2457,
-          "d": 88.0235,
-          "j": 100.6899
+          "k": 92.7162,
+          "d": 91.1004,
+          "j": 95.9477
         },
-        "atr": 346.5623,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 369.1298,
+        "atr_pct": 5.262,
+        "support": 6680.87,
+        "resistance": 7419.13,
+        "ma60": 4514.1468,
         "volume": {
-          "ratio": 1.2033,
-          "avg_20": 2388513.05,
-          "latest": 2874006.0
+          "ratio": 1.8734,
+          "avg_20": 2464761.8,
+          "latest": 4617567.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 6265.0,
+          "ma_long": 5127.5516,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 30,
-        "verdict": "偏空"
+        "tech_score": 40,
+        "verdict": "中性"
       },
       "fundamental": {
         "score": 30,
         "pe_fair": 15,
-        "pe_actual": 36.7682,
+        "pe_actual": 37.2999,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1367,36 +1367,36 @@
         "hot_matches": []
       },
       "total_score": {
-        "total": 38.0,
+        "total": 41.0,
         "fundamental_score": 30,
         "chip_score": 50,
-        "tech_score": 30,
+        "tech_score": 40,
         "industry_score": 50,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 6680.87,
+          "high": 7419.13,
+          "range_pct": 10.52
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 5612.0,
+          "high": 8418.0
         }
       },
       "recommendation": {
         "action": "cautious",
         "label": "謹慎操作",
         "reason": "大立光部分指標轉弱，建議減少部位",
-        "total_score": 38.0,
-        "target_low": null,
-        "target_high": null
+        "total_score": 41.0,
+        "target_low": 6680.87,
+        "target_high": 7419.13
       },
       "sentiment": {
         "score": 50,
@@ -1421,40 +1421,40 @@
       "name": "中華電",
       "industry": "電信",
       "technical": {
-        "price": null,
-        "rsi": 44.5304,
+        "price": 135.5,
+        "rsi": 42.4591,
         "macd": {
-          "macd": -0.2863,
-          "signal": -0.2295,
-          "histogram": -0.0568,
+          "macd": -0.3789,
+          "signal": -0.2645,
+          "histogram": -0.1144,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 138.1194,
+          "middle": 136.425,
+          "lower": 134.7306,
+          "pct_b": 0.227,
+          "bandwidth": 0.0248
         },
         "kdj": {
-          "k": 49.8774,
-          "d": 47.5471,
-          "j": 54.538
+          "k": 33.2789,
+          "d": 41.0957,
+          "j": 17.6451
         },
-        "atr": 1.5599,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 1.5148,
+        "atr_pct": 1.118,
+        "support": 134.15,
+        "resistance": 137.18,
+        "ma60": 137.1175,
         "volume": {
-          "ratio": 0.6022,
-          "avg_20": 9311228.45,
-          "latest": 5607275.0
+          "ratio": 1.1697,
+          "avg_20": 8741454.4,
+          "latest": 10224459.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 136.0,
+          "ma_long": 136.425,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
@@ -1465,7 +1465,7 @@
       "fundamental": {
         "score": 30,
         "pe_fair": 15,
-        "pe_actual": 26.6208,
+        "pe_actual": 26.6732,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1497,13 +1497,13 @@
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 134.15,
+          "high": 137.18,
+          "range_pct": 2.24
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 108.4,
+          "high": 162.6
         }
       },
       "recommendation": {
@@ -1511,8 +1511,8 @@
         "label": "謹慎操作",
         "reason": "中華電部分指標轉弱，建議減少部位",
         "total_score": 40.0,
-        "target_low": null,
-        "target_high": null
+        "target_low": 134.15,
+        "target_high": 137.18
       },
       "sentiment": {
         "score": 50,
@@ -1537,43 +1537,43 @@
       "name": "統一",
       "industry": "食品-通路",
       "technical": {
-        "price": null,
-        "rsi": 61.7188,
+        "price": 75.4,
+        "rsi": 47.7223,
         "macd": {
-          "macd": 0.9339,
-          "signal": 0.7931,
-          "histogram": 0.1409,
+          "macd": 0.6962,
+          "signal": 0.7612,
+          "histogram": -0.065,
           "cross_up": false,
-          "cross_down": false
+          "cross_down": true
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 79.2048,
+          "middle": 75.935,
+          "lower": 72.6652,
+          "pct_b": 0.4182,
+          "bandwidth": 0.0861
         },
         "kdj": {
-          "k": 79.8293,
-          "d": 81.3628,
-          "j": 76.7622
+          "k": 55.3515,
+          "d": 71.0679,
+          "j": 23.9186
         },
-        "atr": 1.4173,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 1.4498,
+        "atr_pct": 1.9228,
+        "support": 74.25,
+        "resistance": 77.15,
+        "ma60": 74.4395,
         "volume": {
-          "ratio": 0.4977,
-          "avg_20": 15422393.9,
-          "latest": 7675895.0
+          "ratio": 0.5793,
+          "avg_20": 14150026.15,
+          "latest": 8196902.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 77.1,
+          "ma_long": 75.935,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
         "tech_score": 45,
         "verdict": "中性"
@@ -1581,7 +1581,7 @@
       "fundamental": {
         "score": 50,
         "pe_fair": 18,
-        "pe_actual": 18.6683,
+        "pe_actual": 18.301,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1613,13 +1613,13 @@
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 74.25,
+          "high": 77.15,
+          "range_pct": 3.85
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 60.32,
+          "high": 90.48
         }
       },
       "recommendation": {
@@ -1627,8 +1627,8 @@
         "label": "持有觀望",
         "reason": "統一指標中性，建議持有觀察",
         "total_score": 49.0,
-        "target_low": null,
-        "target_high": null
+        "target_low": 74.25,
+        "target_high": 77.15
       },
       "sentiment": {
         "score": 50,
@@ -1653,42 +1653,42 @@
       "name": "中鋼",
       "industry": "鋼鐵",
       "technical": {
-        "price": null,
-        "rsi": 55.0737,
+        "price": 19.05,
+        "rsi": 49.7637,
         "macd": {
-          "macd": 0.0961,
-          "signal": 0.1027,
-          "histogram": -0.0066,
+          "macd": 0.0704,
+          "signal": 0.0965,
+          "histogram": -0.0261,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 19.7526,
+          "middle": 19.1675,
+          "lower": 18.5824,
+          "pct_b": 0.3996,
+          "bandwidth": 0.0611
         },
         "kdj": {
-          "k": 46.6433,
-          "d": 42.762,
-          "j": 54.406
+          "k": 40.6134,
+          "d": 42.5721,
+          "j": 36.6958
         },
-        "atr": 0.3527,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 0.3303,
+        "atr_pct": 1.7339,
+        "support": 18.74,
+        "resistance": 19.4,
+        "ma60": 18.8795,
         "volume": {
-          "ratio": 0.4305,
-          "avg_20": 38342380.35,
-          "latest": 16505140.0
+          "ratio": 0.5265,
+          "avg_20": 37443999.75,
+          "latest": 19716072.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 19.16,
+          "ma_long": 19.1675,
           "golden_cross": false,
-          "death_cross": false,
+          "death_cross": true,
           "bullish": false
         },
         "tech_score": 40,
@@ -1697,7 +1697,7 @@
       "fundamental": {
         "score": 30,
         "pe_fair": 10,
-        "pe_actual": 53.4185,
+        "pe_actual": 53.1396,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1729,13 +1729,13 @@
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 18.74,
+          "high": 19.4,
+          "range_pct": 3.46
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 15.24,
+          "high": 22.86
         }
       },
       "recommendation": {
@@ -1743,8 +1743,8 @@
         "label": "謹慎操作",
         "reason": "中鋼部分指標轉弱，建議減少部位",
         "total_score": 40.0,
-        "target_low": null,
-        "target_high": null
+        "target_low": 18.74,
+        "target_high": 19.4
       },
       "sentiment": {
         "score": 50,
@@ -1769,51 +1769,51 @@
       "name": "長榮",
       "industry": "航運-貨櫃",
       "technical": {
-        "price": null,
-        "rsi": 57.4951,
+        "price": 231.0,
+        "rsi": 57.2344,
         "macd": {
-          "macd": 11.3188,
-          "signal": 10.0283,
-          "histogram": 1.2904,
+          "macd": 9.3761,
+          "signal": 9.7483,
+          "histogram": -0.3722,
           "cross_up": false,
-          "cross_down": false
+          "cross_down": true
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 258.0189,
+          "middle": 225.475,
+          "lower": 192.9311,
+          "pct_b": 0.5849,
+          "bandwidth": 0.2887
         },
         "kdj": {
-          "k": 72.0506,
-          "d": 83.2574,
-          "j": 49.637
+          "k": 45.9365,
+          "d": 65.6563,
+          "j": 6.4969
         },
-        "atr": 7.6486,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 7.4609,
+        "atr_pct": 3.2298,
+        "support": 222.71,
+        "resistance": 237.63,
+        "ma60": 206.9148,
         "volume": {
-          "ratio": 1.2506,
-          "avg_20": 16692281.55,
-          "latest": 20875865.0
+          "ratio": 0.4396,
+          "avg_20": 16712093.0,
+          "latest": 7346436.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 238.2,
+          "ma_long": 225.475,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 50,
+        "tech_score": 45,
         "verdict": "中性"
       },
       "fundamental": {
         "score": 50,
         "pe_fair": 8,
-        "pe_actual": 9.2262,
+        "pe_actual": 9.1739,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1831,36 +1831,36 @@
         "hot_matches": []
       },
       "total_score": {
-        "total": 50.0,
+        "total": 48.5,
         "fundamental_score": 50,
         "chip_score": 50,
-        "tech_score": 50,
+        "tech_score": 45,
         "industry_score": 50,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 222.71,
+          "high": 237.63,
+          "range_pct": 6.46
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 184.8,
+          "high": 277.2
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "長榮指標中性，建議持有觀察",
-        "total_score": 50.0,
-        "target_low": null,
-        "target_high": null
+        "total_score": 48.5,
+        "target_low": 222.71,
+        "target_high": 237.63
       },
       "sentiment": {
         "score": 50,
@@ -1885,51 +1885,51 @@
       "name": "欣興",
       "industry": "PCB-載板",
       "technical": {
-        "price": null,
-        "rsi": 65.4725,
+        "price": 1095.0,
+        "rsi": 57.2504,
         "macd": {
-          "macd": 62.3345,
-          "signal": 52.8196,
-          "histogram": 9.5149,
+          "macd": 61.9845,
+          "signal": 55.6975,
+          "histogram": 6.287,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 1221.7929,
+          "middle": 1045.75,
+          "lower": 869.7071,
+          "pct_b": 0.6399,
+          "bandwidth": 0.3367
         },
         "kdj": {
-          "k": 65.772,
-          "d": 67.278,
-          "j": 62.76
+          "k": 59.113,
+          "d": 65.6989,
+          "j": 45.9411
         },
-        "atr": 71.7611,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 75.6538,
+        "atr_pct": 6.909,
+        "support": 1064.35,
+        "resistance": 1215.65,
+        "ma60": 949.0597,
         "volume": {
-          "ratio": 1.1515,
-          "avg_20": 20813977.4,
-          "latest": 23967718.0
+          "ratio": 1.0922,
+          "avg_20": 21831847.95,
+          "latest": 23845730.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 1121.0,
+          "ma_long": 1045.75,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 45,
-        "verdict": "中性"
+        "tech_score": 60,
+        "verdict": "偏多"
       },
       "fundamental": {
         "score": 30,
         "pe_fair": 15,
-        "pe_actual": 77.6316,
+        "pe_actual": 72.8477,
         "yoy_change": null,
         "mom_change": null
       },
@@ -1950,36 +1950,36 @@
         ]
       },
       "total_score": {
-        "total": 42.5,
+        "total": 49.2,
         "fundamental_score": 30,
         "chip_score": 50,
-        "tech_score": 45,
+        "tech_score": 60,
         "industry_score": 65,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 1064.35,
+          "high": 1215.65,
+          "range_pct": 13.82
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 876.0,
+          "high": 1314.0
         }
       },
       "recommendation": {
         "action": "hold",
         "label": "持有觀望",
         "reason": "欣興指標中性，建議持有觀察",
-        "total_score": 42.5,
-        "target_low": null,
-        "target_high": null
+        "total_score": 49.2,
+        "target_low": 1064.35,
+        "target_high": 1215.65
       },
       "sentiment": {
         "score": 50,
@@ -2004,51 +2004,51 @@
       "name": "緯穎",
       "industry": "伺服器-ODM",
       "technical": {
-        "price": null,
-        "rsi": 67.9195,
+        "price": 7205.0,
+        "rsi": 74.4906,
         "macd": {
-          "macd": 306.1804,
-          "signal": 298.6291,
-          "histogram": 7.5513,
+          "macd": 363.1928,
+          "signal": 315.0813,
+          "histogram": 48.1115,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 6983.865,
+          "middle": 6333.0,
+          "lower": 5682.135,
+          "pct_b": 1.1699,
+          "bandwidth": 0.2055
         },
         "kdj": {
-          "k": 64.3358,
-          "d": 60.7894,
-          "j": 71.4284
+          "k": 79.0998,
+          "d": 69.0364,
+          "j": 99.2265
         },
-        "atr": 325.6989,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 326.981,
+        "atr_pct": 4.5383,
+        "support": 6768.02,
+        "resistance": 7421.98,
+        "ma60": 5444.7234,
         "volume": {
-          "ratio": 0.9757,
-          "avg_20": 1512403.05,
-          "latest": 1475592.0
+          "ratio": 1.154,
+          "avg_20": 1525786.0,
+          "latest": 1760830.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 6709.0,
+          "ma_long": 6333.0,
           "golden_cross": false,
           "death_cross": false,
-          "bullish": false
+          "bullish": true
         },
-        "tech_score": 45,
-        "verdict": "中性"
+        "tech_score": 35,
+        "verdict": "偏空"
       },
       "fundamental": {
         "score": 30,
         "pe_fair": 15,
-        "pe_actual": 23.3047,
+        "pe_actual": 24.6443,
         "yoy_change": null,
         "mom_change": null
       },
@@ -2069,36 +2069,36 @@
         ]
       },
       "total_score": {
-        "total": 42.5,
+        "total": 41.8,
         "fundamental_score": 30,
         "chip_score": 50,
-        "tech_score": 45,
+        "tech_score": 35,
         "industry_score": 65,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 6768.02,
+          "high": 7421.98,
+          "range_pct": 9.08
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 5764.0,
+          "high": 8646.0
         }
       },
       "recommendation": {
-        "action": "hold",
-        "label": "持有觀望",
-        "reason": "緯穎指標中性，建議持有觀察",
-        "total_score": 42.5,
-        "target_low": null,
-        "target_high": null
+        "action": "cautious",
+        "label": "謹慎操作",
+        "reason": "緯穎部分指標轉弱，建議減少部位",
+        "total_score": 41.8,
+        "target_low": 6768.02,
+        "target_high": 7421.98
       },
       "sentiment": {
         "score": 50,
@@ -2123,40 +2123,40 @@
       "name": "智邦",
       "industry": "網通設備",
       "technical": {
-        "price": null,
-        "rsi": 40.762,
+        "price": 2120.0,
+        "rsi": 46.203,
         "macd": {
-          "macd": -58.901,
-          "signal": -47.1168,
-          "histogram": -11.7842,
+          "macd": -52.4563,
+          "signal": -46.5412,
+          "histogram": -5.9151,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 2431.8925,
+          "middle": 2194.75,
+          "lower": 1957.6075,
+          "pct_b": 0.3424,
+          "bandwidth": 0.2161
         },
         "kdj": {
-          "k": 18.6032,
-          "d": 21.0559,
-          "j": 13.6978
+          "k": 29.3507,
+          "d": 24.3669,
+          "j": 39.3183
         },
-        "atr": 129.7407,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 124.9534,
+        "atr_pct": 5.894,
+        "support": 2013.38,
+        "resistance": 2263.29,
+        "ma60": 2297.474,
         "volume": {
-          "ratio": 0.8467,
-          "avg_20": 2915448.7,
-          "latest": 2468425.0
+          "ratio": 0.7345,
+          "avg_20": 2974825.85,
+          "latest": 2184995.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 2073.0,
+          "ma_long": 2194.75,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
@@ -2167,7 +2167,7 @@
       "fundamental": {
         "score": 30,
         "pe_fair": 15,
-        "pe_actual": 33.0226,
+        "pe_actual": 33.4754,
         "yoy_change": null,
         "mom_change": null
       },
@@ -2188,36 +2188,36 @@
         ]
       },
       "total_score": {
-        "total": 41.5,
+        "total": 43.2,
         "fundamental_score": 30,
         "chip_score": 50,
         "tech_score": 40,
         "industry_score": 65,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 2013.38,
+          "high": 2263.29,
+          "range_pct": 11.79
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 1696.0,
+          "high": 2544.0
         }
       },
       "recommendation": {
-        "action": "cautious",
-        "label": "謹慎操作",
-        "reason": "智邦部分指標轉弱，建議減少部位",
-        "total_score": 41.5,
-        "target_low": null,
-        "target_high": null
+        "action": "hold",
+        "label": "持有觀望",
+        "reason": "智邦指標中性，建議持有觀察",
+        "total_score": 43.2,
+        "target_low": 2013.38,
+        "target_high": 2263.29
       },
       "sentiment": {
         "score": 50,
@@ -2242,40 +2242,40 @@
       "name": "亞德客-KY",
       "industry": "氣動元件-自動化",
       "technical": {
-        "price": null,
-        "rsi": 53.17,
+        "price": 1415.0,
+        "rsi": 46.7704,
         "macd": {
-          "macd": 18.1309,
-          "signal": 25.9758,
-          "histogram": -7.845,
+          "macd": 13.3637,
+          "signal": 23.831,
+          "histogram": -10.4674,
           "cross_up": false,
           "cross_down": false
         },
         "bb": {
-          "upper": null,
-          "middle": null,
-          "lower": null,
-          "pct_b": null,
-          "bandwidth": null
+          "upper": 1593.8216,
+          "middle": 1481.25,
+          "lower": 1368.6784,
+          "pct_b": 0.2057,
+          "bandwidth": 0.152
         },
         "kdj": {
-          "k": 39.6352,
-          "d": 32.5268,
-          "j": 53.8519
+          "k": 41.5472,
+          "d": 39.5904,
+          "j": 45.4609
         },
-        "atr": 72.7584,
-        "atr_pct": null,
-        "support": null,
-        "resistance": null,
-        "ma60": null,
+        "atr": 71.5959,
+        "atr_pct": 5.0598,
+        "support": 1366.74,
+        "resistance": 1509.93,
+        "ma60": 1375.9441,
         "volume": {
-          "ratio": 1.0914,
-          "avg_20": 861778.35,
-          "latest": 940543.0
+          "ratio": 0.7088,
+          "avg_20": 794185.75,
+          "latest": 562925.0
         },
         "ma_crossover": {
-          "ma_short": null,
-          "ma_long": null,
+          "ma_short": 1452.0,
+          "ma_long": 1481.25,
           "golden_cross": false,
           "death_cross": false,
           "bullish": false
@@ -2286,7 +2286,7 @@
       "fundamental": {
         "score": 30,
         "pe_fair": 15,
-        "pe_actual": 28.4397,
+        "pe_actual": 27.2377,
         "yoy_change": null,
         "mom_change": null
       },
@@ -2304,36 +2304,36 @@
         "hot_matches": []
       },
       "total_score": {
-        "total": 40.0,
+        "total": 41.0,
         "fundamental_score": 30,
         "chip_score": 50,
         "tech_score": 40,
         "industry_score": 50,
         "weights_used": {
-          "fundamental": 0.4,
-          "chip": 0.3,
-          "technical": 0.2,
-          "industry": 0.1
+          "fundamental": 0.3,
+          "chip": 0.25,
+          "technical": 0.3,
+          "industry": 0.15
         }
       },
       "targets": {
         "short_term": {
-          "low": null,
-          "high": null,
-          "range_pct": 0
+          "low": 1366.74,
+          "high": 1509.93,
+          "range_pct": 10.12
         },
         "long_term": {
-          "low": null,
-          "high": null
+          "low": 1132.0,
+          "high": 1698.0
         }
       },
       "recommendation": {
         "action": "cautious",
         "label": "謹慎操作",
         "reason": "亞德客-KY部分指標轉弱，建議減少部位",
-        "total_score": 40.0,
-        "target_low": null,
-        "target_high": null
+        "total_score": 41.0,
+        "target_low": 1366.74,
+        "target_high": 1509.93
       },
       "sentiment": {
         "score": 50,
